@@ -5,6 +5,8 @@ theme: minima
 
 author:
   name: Sly
-  email: # fill in tomorrow when we set up custom email
 
 show_excerpts: true
+
+minima:
+  skin: dark
