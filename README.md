@@ -1,2 +1,2 @@
 # slytech-blog
-This will be a tech blog for my homelab
+This is where I’ll be documenting my homelab builds, cybersecurity lab work, and infrastructure projects. First real post coming soon
