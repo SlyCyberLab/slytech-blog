@@ -1,12 +1,6 @@
 title: SlyTech Blog
 description: Homelab, cybersecurity, and infrastructure writeups by Sly
 url: "https://blog.slytech.us"
-theme: minima
-
-author:
-  name: Sly
-
+remote_theme: jekyll/minima
+author: Sly
 show_excerpts: true
-
-minima:
-  skin: dark
