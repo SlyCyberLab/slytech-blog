@@ -1,0 +1,10 @@
+title: SlyTech Blog
+description: Homelab, cybersecurity, and infrastructure writeups by Sly
+url: "https://blog.slytech.us"
+theme: minima
+
+author:
+  name: Sly
+  email: # fill in tomorrow when we set up custom email
+
+show_excerpts: true
