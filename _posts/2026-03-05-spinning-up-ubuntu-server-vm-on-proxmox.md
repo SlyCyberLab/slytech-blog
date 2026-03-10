@@ -8,6 +8,8 @@ tags: [proxmox, ubuntu, virtualization, homelab, linux]
 
 If you're running Proxmox and haven't spun up a Linux VM yet, this is probably the best place to start. Ubuntu Server is lightweight, well documented, and works perfectly as a base for almost anything you want to run in your homelab. I spun this one up on Citadel, my dedicated cybersecurity lab server, to use as a foundation for a Wazuh SIEM deployment.
 
+<!--more-->
+
 ## Creating the VM
 
 The whole process starts in the Proxmox web UI. Hit Create VM, assign it an ID, give it a name and you're already halfway there. The settings I went with:
