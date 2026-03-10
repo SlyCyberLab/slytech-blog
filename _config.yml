@@ -4,7 +4,7 @@ url: "https://blog.slytech.us"
 remote_theme: jekyll/minima
 author: Emsly
 show_excerpts: true
-excerpt_separator: "<!--more-->"
+excerpt_separator: <!--more-->
 
 minima:
   skin: solarized-dark
