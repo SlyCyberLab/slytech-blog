@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "No More IP:Port — Custom Domains in My Homelab with Tailscale, Technitium, and NPMplus"
+title: "No More IP:Port,  Custom Domains in My Homelab with Tailscale, Technitium, and NPMplus"
 date: 2026-03-05
 categories: [homelab, networking, dns]
 tags: [tailscale, technitium, npmplus, dns, ssl, proxmox, homelab]
