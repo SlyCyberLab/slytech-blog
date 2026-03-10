@@ -1,13 +1,13 @@
 title: SlyTech Blog
-description: Homelab, cybersecurity, and infrastructure writeups by Sly
+description: Homelab, cybersecurity, and infrastructure writeups by Emsly
 url: "https://blog.slytech.us"
 remote_theme: jekyll/minima
-author: Sly
+author: Emsly
 show_excerpts: true
 excerpt_separator: "<!--more-->"
 
 minima:
-  skin: dark
+  skin: solarized-dark
   date_format: "%b %-d, %Y"
   social_links:
     - { platform: github, user_url: "https://github.com/SlyCyberLab" }
