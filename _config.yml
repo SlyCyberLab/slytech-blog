@@ -4,3 +4,16 @@ url: "https://blog.slytech.us"
 remote_theme: jekyll/minima
 author: Sly
 show_excerpts: true
+excerpt_separator: "<!--more-->"
+
+minima:
+  skin: dark
+  date_format: "%b %-d, %Y"
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+social_links:
+  - { platform: github, user_url: "https://github.com/SlyCyberLab" }
+  - { platform: linkedin, user_url: "https://www.linkedin.com/in/emsly-s-482794196/" }
