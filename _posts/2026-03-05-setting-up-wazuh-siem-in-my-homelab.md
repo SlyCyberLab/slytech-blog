@@ -8,6 +8,8 @@ tags: [wazuh, proxmox, ubuntu, monitoring, siem, cybersecurity]
 
 If you're running a homelab and want to get into security monitoring without spinning up a full enterprise stack, Wazuh is one of the best starting points. It's open source, actively maintained, and mirrors what you'd actually use in a real SOC environment. I've had it running for about three months now and it's become one of the most valuable tools in my setup.
 
+<!--more--> 
+
 ## Why Wazuh
 
 Most SIEM solutions are either too heavy for a homelab or locked behind a paywall. Wazuh hits the sweet spot, it gives you host-based intrusion detection, log analysis, vulnerability detection, file integrity monitoring, and compliance assessment all in one package, for free.
