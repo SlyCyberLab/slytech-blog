@@ -10,6 +10,8 @@ At some point every homelabber hits the same wall. You've got a dozen services r
 
 I got tired of it. So I fixed it.
 
+<!--more-->
+
 Now every service in my homelab has a proper domain name, a valid SSL certificate, and works from any of my devices without a single port number in sight. Here's how I put it together.
 
 ## The Stack
