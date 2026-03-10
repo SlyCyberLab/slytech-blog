@@ -3,17 +3,15 @@ description: Homelab, cybersecurity, and infrastructure writeups by Emsly
 url: "https://blog.slytech.us"
 remote_theme: jekyll/minima
 author: Emsly
-show_excerpts: true
 excerpt_separator: <!--more-->
-
 minima:
   skin: solarized-dark
   date_format: "%b %-d, %Y"
+  show_excerpts: true
   social_links:
     - { platform: github, url: "https://github.com/SlyCyberLab" }
     - { platform: linkedin, url: "https://www.linkedin.com/in/emsly-s-482794196/" }
   feed:
     disable: true
-
 plugins:
   - jekyll-seo-tag
