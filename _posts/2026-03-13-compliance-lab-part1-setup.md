@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Building a Security Compliance Lab from Scratch: Part 1, Infrastructure Setup"
-date: 2026-03-10
+date: 2026-03-13
 categories: [homelab, security, proxmox]
 tags: [wazuh, siem, pfsense, activedirectory, kali, compliance, iso27001, nist]
 ---
