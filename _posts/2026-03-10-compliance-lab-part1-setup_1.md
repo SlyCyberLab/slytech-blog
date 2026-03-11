@@ -10,6 +10,8 @@ Every cybersecurity job description I read lists experience with security framew
 
 So I built the lab. This is Part 1 of a three-part series. By the end of Part 3, I'll have a fully segmented SOC environment on Citadel mapped to both ISO 27001 and NIST CSF 2.0 controls with real evidence to show for it.
 
+<!--more--> 
+
 Part 1 is the infrastructure. No compliance work yet, just getting the environment right so Parts 2 and 3 actually mean something.
 
 ---
