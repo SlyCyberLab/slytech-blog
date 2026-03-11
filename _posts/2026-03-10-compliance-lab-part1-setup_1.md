@@ -1,18 +1,18 @@
 ---
 layout: post
-title: "Building a Security Compliance Lab from Scratch: Part 1 — Infrastructure Setup"
+title: "Building a Security Compliance Lab from Scratch: Part 1, Infrastructure Setup"
 date: 2026-03-10
 categories: [homelab, security, proxmox]
 tags: [wazuh, siem, pfsense, activedirectory, kali, compliance, iso27001, nist]
 ---
 
-Every cybersecurity job description I read lists experience with security frameworks. NIST CSF. ISO 27001. NIST 800-53. They show up in SOC analyst roles, security engineer roles, even sysadmin roles that are shifting toward compliance work. Reading about these frameworks is one thing. Being able to say you built a lab that demonstrates them is a different conversation entirely.
+Security frameworks show up on almost every cybersecurity job description. NIST CSF. ISO 27001. NIST 800-53. Whether you're going for a SOC analyst role, a security engineer position, or a sysadmin job that's shifting toward compliance work, there's a good chance they'll expect you to know at least one of them. Reading about these frameworks is one thing. Being able to say you built a lab that demonstrates them is a different conversation entirely.
 
-So I built the lab. This is Part 1 of a three-part series. By the end of Part 3, I'll have a fully segmented SOC environment on Citadel mapped to both ISO 27001 and NIST CSF 2.0 controls with real evidence to show for it.
+So I built the lab. 
 
-<!--more--> 
+<!--more-->
 
-Part 1 is the infrastructure. No compliance work yet, just getting the environment right so Parts 2 and 3 actually mean something.
+This is Part 1 of a three-part series. By the end of Part 3, I'll have a fully segmented SOC environment on Citadel mapped to both ISO 27001 and NIST CSF 2.0 controls with real evidence to show for it.
 
 ---
 
@@ -40,7 +40,7 @@ pfSense sits between all of them. Management zone can see Corporate. Corporate c
 
 ## Why Wazuh
 
-I already run Wazuh on The Forge for homelab monitoring. For this lab it was the obvious choice, but not just because I know it. The compliance dashboards are built in. ISO 27001, NIST 800-53, PCI DSS, HIPAA tabs are all there out of the box. When Part 2 comes and I'm mapping Annex A controls to real evidence, Wazuh already has the correlation rules and compliance views wired up. I don't have to build that from scratch.
+I've been running Wazuh in my homelab for general security monitoring. For this lab it was the obvious choice, but not just because I know it. The compliance dashboards are built in. ISO 27001, NIST 800-53, PCI DSS, HIPAA tabs are all there out of the box. When Part 2 comes and I'm mapping Annex A controls to real evidence, Wazuh already has the correlation rules and compliance views wired up. I don't have to build that from scratch.
 
 Security Onion is the other serious option for a lab like this. It bundles Suricata and Zeek for network-level visibility which Wazuh doesn't do natively. If this were purely a network forensics lab I'd go that route. But for a compliance-focused lab where the goal is demonstrating control implementation, Wazuh wins. It gives you the evidence layer, not just the detection layer.
 
@@ -174,7 +174,7 @@ sudo apt install openssh-server -y
 sudo systemctl enable ssh && sudo systemctl start ssh
 ```
 
-Kali is now reachable from DarkShell over Tailscale for remote attack simulation in Parts 2 and 3.
+Kali is now reachable remotely over Tailscale for attack simulation in Parts 2 and 3.
 
 ---
 
@@ -194,4 +194,4 @@ That changes in Part 2.
 
 The lab is up, the agents are reporting, and the SIEM is collecting. Infrastructure done. Now the real work starts.
 
-Part 2 maps ISO 27001 Annex A controls directly to what we just built — access control, logging, vulnerability management, incident detection — and generates the kind of compliance evidence you'd actually present in an audit. That's the part that shows up on job descriptions.
+Part 2 maps ISO 27001 Annex A controls directly to what we just built: access control, logging, vulnerability management, incident detection. It generates the kind of compliance evidence you'd actually present in an audit. That's the part that shows up on job descriptions.
