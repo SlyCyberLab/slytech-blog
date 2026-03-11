@@ -32,7 +32,7 @@ Five VMs make up this lab:
 | `kali-attack` | Attack simulation | 10.10.30.10 | Workstation (vmbr3) |
 | `linux-endpoint` | OpenSCAP compliance target | 10.10.20.30 | Corporate (vmbr2) |
 
-![pfSense firewall rules showing zone isolation between Management, Corporate, and Workstation networks](/assets/images/compliance-lab-00-pfsense-firewall-rules.png)
+![pfSense firewall rules showing zone isolation between Management, Corporate, and Workstation networks](/assets/images/compliance-lab-08-pfsense-zone-rules.png)
 
 pfSense sits between all of them. Management zone can see Corporate. Corporate can't reach the Workstation zone where Kali lives. Kali can only reach what the firewall rules explicitly allow. That segmentation is what makes the attack simulation meaningful in Part 2.
 
@@ -78,7 +78,7 @@ Worth doing the `dd` wipe before reinstalling on a used disk. Without it you ris
 
 ## Installing Wazuh
 
-I've covered the full [Ubuntu 22.04 setup](https://blog.slytech.us/homelab/proxmox/linux/2026/03/05/spinning-up-ubuntu-server-vm-on-proxmox.html) and [Wazuh installation](https://blog.slytech.us/homelab/security/siem/2026/03/06/setting-up-wazuh-siem-in-my-homelab.html) in previous posts if you want the step-by-step detail. For this lab, the short version: Ubuntu installed clean with a static IP at `10.10.10.20`, SSH enabled, updates applied.
+I've covered the full [Ubuntu 22.04 setup](https://blog.slytech.us/homelab/proxmox/linux/2026/03/05/spinning-up-ubuntu-server-vm-on-proxmox.html) and [Wazuh installation](https://blog.slytech.us/homelab/security/siem/2026/03/05/setting-up-wazuh-siem-in-my-homelab.html) in previous posts if you want the step-by-step detail. For this lab, the short version: Ubuntu installed clean with a static IP at `10.10.10.20`, SSH enabled, updates applied.
 
 For the Wazuh install, the `-a` flag handles everything in one shot. No manual config editing, no running components separately. It installs the indexer, manager, and dashboard together on a single node.
 
