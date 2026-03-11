@@ -32,13 +32,13 @@ Five VMs make up this lab:
 | `kali-attack` | Attack simulation | 10.10.30.10 | Workstation (vmbr3) |
 | `linux-endpoint` | OpenSCAP compliance target | 10.10.20.30 | Corporate (vmbr2) |
 
-![pfSense firewall rules showing zone isolation between Management, Corporate, and Workstation networks](/assets/images/compliance-lab-08-pfsense-zone-rules.png)
-
-pfSense sits between all of them. Management zone can see Corporate. Corporate can't reach the Workstation zone where Kali lives. Kali can only reach what the firewall rules explicitly allow. That segmentation is what makes the attack simulation meaningful in Part 2.
+The `linux-endpoint` VM at `10.10.20.30` is the OpenSCAP compliance target. It doesn't get much attention in Part 1 but it's the star of the compliance scanning section in Part 3.
 
 ![Proxmox VM overview showing all lab VMs on Citadel](/assets/images/compliance-lab-01-proxmox-vm-overview.png)
 
-The `linux-endpoint` VM at `10.10.20.30` is the OpenSCAP compliance target. It doesn't get much attention in Part 1 but it's the star of the compliance scanning section in Part 3.
+pfSense sits between all of them. Management zone can see Corporate. Corporate can't reach the Workstation zone where Kali lives. Kali can only reach what the firewall rules explicitly allow. That segmentation is what makes the attack simulation meaningful in Part 2.
+
+![pfSense firewall rules showing zone isolation between Management, Corporate, and Workstation networks](/assets/images/compliance-lab-08-pfsense-zone-rules.png)
 
 ---
 
