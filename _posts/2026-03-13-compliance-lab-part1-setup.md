@@ -1,18 +1,18 @@
 ---
 layout: post
 title: "Building a Security Compliance Lab from Scratch: Part 1, Infrastructure Setup"
-date: 2026-03-13
+date: 2026-03-10
 categories: [homelab, security, proxmox]
 tags: [wazuh, siem, pfsense, activedirectory, kali, compliance, iso27001, nist]
 ---
 
 Security frameworks show up on almost every cybersecurity job description. NIST CSF. ISO 27001. NIST 800-53. Whether you're going for a SOC analyst role, a security engineer position, or a sysadmin job that's shifting toward compliance work, there's a good chance they'll expect you to know at least one of them. Reading about these frameworks is one thing. Being able to say you built a lab that demonstrates them is a different conversation entirely.
 
-So I built the lab. 
+So I built the lab.
 
 <!--more-->
 
-This is Part 1 of a three-part series. By the end of Part 3, I'll have a fully segmented SOC environment on Citadel mapped to both ISO 27001 and NIST CSF 2.0 controls with real evidence to show for it.
+This is Part 1 of a three-part series. By the end of Part 3, I'll have a fully segmented SOC environment mapped to both ISO 27001 and NIST CSF 2.0 controls with real audit evidence to back it up.
 
 ---
 
@@ -32,9 +32,13 @@ Five VMs make up this lab:
 | `kali-attack` | Attack simulation | 10.10.30.10 | Workstation (vmbr3) |
 | `linux-endpoint` | OpenSCAP compliance target | 10.10.20.30 | Corporate (vmbr2) |
 
+![pfSense firewall rules showing zone isolation between Management, Corporate, and Workstation networks](/assets/images/compliance-lab-00-pfsense-firewall-rules.png)
+
 pfSense sits between all of them. Management zone can see Corporate. Corporate can't reach the Workstation zone where Kali lives. Kali can only reach what the firewall rules explicitly allow. That segmentation is what makes the attack simulation meaningful in Part 2.
 
 ![Proxmox VM overview showing all lab VMs on Citadel](/assets/images/compliance-lab-01-proxmox-vm-overview.png)
+
+The `linux-endpoint` VM at `10.10.20.30` is the OpenSCAP compliance target. It doesn't get much attention in Part 1 but it's the star of the compliance scanning section in Part 3.
 
 ---
 
@@ -74,7 +78,7 @@ Worth doing the `dd` wipe before reinstalling on a used disk. Without it you ris
 
 ## Installing Wazuh
 
-I've covered the full [Ubuntu 22.04 setup](https://blog.slytech.us/homelab/proxmox/linux/2026/03/05/spinning-up-ubuntu-server-vm-on-proxmox.html) and [Wazuh installation](https://blog.slytech.us/homelab/security/siem/2026/03/05/setting-up-wazuh-siem-in-my-homelab.html) in previous posts if you want the step-by-step detail. For this lab, the short version: Ubuntu installed clean with a static IP at `10.10.10.20`, SSH enabled, updates applied.
+I've covered the full [Ubuntu 22.04 setup](https://blog.slytech.us/homelab/proxmox/linux/2026/03/05/spinning-up-ubuntu-server-vm-on-proxmox.html) and [Wazuh installation](https://blog.slytech.us/homelab/security/siem/2026/03/06/setting-up-wazuh-siem-in-my-homelab.html) in previous posts if you want the step-by-step detail. For this lab, the short version: Ubuntu installed clean with a static IP at `10.10.10.20`, SSH enabled, updates applied.
 
 For the Wazuh install, the `-a` flag handles everything in one shot. No manual config editing, no running components separately. It installs the indexer, manager, and dashboard together on a single node.
 
@@ -82,7 +86,13 @@ For the Wazuh install, the `-a` flag handles everything in one shot. No manual c
 curl -sO https://packages.wazuh.com/4.11/wazuh-install.sh && sudo bash ./wazuh-install.sh -a
 ```
 
-Takes about 10 minutes. When it finishes it prints your admin credentials to the terminal. Save them before you clear the screen, there is no easy way to recover them without digging into config files.
+Takes about 10 minutes. When it finishes it prints your admin credentials to the terminal. Save them before you clear the screen. If you miss them, they're recoverable with:
+
+```bash
+sudo tar -O -xvf wazuh-install-files.tar wazuh-passwords.txt
+```
+
+But it's easier to just copy them on first run.
 
 Dashboard comes up at `https://10.10.10.20`. First login looks like this:
 
@@ -180,13 +190,11 @@ Kali is now reachable remotely over Tailscale for attack simulation in Parts 2 a
 
 ## Where Things Stand
 
-The environment is clean. pfSense is segmenting four zones. Wazuh is up with three active agents. dc01 has a real AD structure with groups and OUs. Kali is isolated in its own zone with Tailscale access for remote control.
+The foundation is solid. pfSense is segmenting four zones, Wazuh has three active agents reporting in, dc01 is running a real AD structure, and Kali is isolated and ready. That's the environment ISO 27001 and NIST controls will actually run against.
 
 ![Wazuh agents list confirming all three endpoints reporting in](/assets/images/compliance-lab-03-wazuh-agents-active.png)
 
-This is the foundation. Nothing fancy, no compliance mapping yet, just a properly segmented lab with real endpoints and a SIEM collecting their activity.
-
-That changes in Part 2.
+Part 2 is where the compliance work starts.
 
 ---
 
