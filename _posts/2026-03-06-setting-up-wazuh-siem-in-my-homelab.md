@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Setting Up Wazuh SIEM in My Homelab"
-date: 2026-03-05
+date: 2026-03-06
 categories: [homelab, security, siem]
 tags: [wazuh, proxmox, ubuntu, monitoring, siem, cybersecurity]
 ---
