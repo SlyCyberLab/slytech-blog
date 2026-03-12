@@ -15,3 +15,4 @@ minima:
     disable: true
 plugins:
   - jekyll-seo-tag
+  - jekyll-sitemap
