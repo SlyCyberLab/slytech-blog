@@ -2,6 +2,7 @@
 layout: post
 title: "Setting Up Wazuh SIEM in My Homelab"
 date: 2026-03-06
+description: "How to install Wazuh SIEM on Ubuntu Server in a homelab environment, including agent deployment and first security events."
 categories: [homelab, security, siem]
 tags: [wazuh, proxmox, ubuntu, monitoring, siem, cybersecurity]
 ---
