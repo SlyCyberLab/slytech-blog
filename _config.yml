@@ -16,3 +16,7 @@ minima:
 plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
+exclude:
+  - googlea6fe9f2670c589fb.html
+  - Gemfile
+  - Gemfile.lock
