@@ -2,6 +2,7 @@
 layout: post
 title: "Spinning Up an Ubuntu Server VM on Proxmox"
 date: 2026-03-05
+description: "Step-by-step guide to creating an Ubuntu Server VM on Proxmox, including static IP, SSH setup, and LVM disk expansion."
 categories: [homelab, proxmox, linux]
 tags: [proxmox, ubuntu, virtualization, homelab, linux]
 ---
