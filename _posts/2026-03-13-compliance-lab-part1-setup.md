@@ -2,6 +2,7 @@
 layout: post
 title: "Building a Security Compliance Lab from Scratch: Part 1, Infrastructure Setup"
 date: 2026-03-13
+description: "Building a segmented SOC lab on Proxmox with Wazuh, pfSense, Kali, and Active Directory mapped to ISO 27001 and NIST CSF 2.0 controls."
 categories: [homelab, security, proxmox]
 tags: [wazuh, siem, pfsense, activedirectory, kali, compliance, iso27001, nist]
 ---
