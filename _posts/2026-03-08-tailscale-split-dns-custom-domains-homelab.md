@@ -2,6 +2,7 @@
 layout: post
 title: "No More IP:Port,  Custom Domains in My Homelab with Tailscale, Technitium, and NPMplus"
 date: 2026-03-08
+description: "How to set up custom domains in a homelab using Tailscale split DNS, Technitium DNS, and NPMplus with wildcard SSL certificates."
 categories: [homelab, networking, dns]
 tags: [tailscale, technitium, npmplus, dns, ssl, proxmox, homelab]
 ---
