@@ -1,5 +1,5 @@
 title: SlyTech Blog
-description: "Homelab cybersecurity labs, SIEM setup, Proxmox, Wazuh, and blue team projects by Emsly."
+description: "Homelab, cybersecurity labs, SIEM setup, Proxmox, Wazuh, and blue team projects by Emsly."
 url: "https://blog.slytech.us"
 remote_theme: jekyll/minima
 author: Emsly
