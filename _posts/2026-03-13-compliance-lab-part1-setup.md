@@ -45,7 +45,7 @@ pfSense sits between all of them. Management zone can see Corporate. Corporate c
 
 ## Why Wazuh
 
-I've been running Wazuh in my homelab for general security monitoring. For this lab it was the obvious choice, but not just because I know it. The compliance dashboards are built in. ISO 27001, NIST 800-53, PCI DSS, HIPAA tabs are all there out of the box. When Part 2 comes and I'm mapping Annex A controls to real evidence, Wazuh already has the correlation rules and compliance views wired up. I don't have to build that from scratch.
+I've been running Wazuh in my homelab for general security monitoring. For this lab it was the obvious choice, but not just because I know it. The compliance dashboards are built in. NIST 800-53, PCI DSS, GDPR, and HIPAA tabs are all there out of the box. Wazuh doesn't have a dedicated ISO 27001 dashboard, but NIST 800-53 and ISO 27001 Annex A share significant control overlap, particularly in access control, audit logging, and configuration management. When Part 2 comes and I'm mapping Annex A controls to real evidence, the SIEM is already collecting the right data. I don't have to build that from scratch.
 
 Security Onion is the other serious option for a lab like this. It bundles Suricata and Zeek for network-level visibility which Wazuh doesn't do natively. If this were purely a network forensics lab I'd go that route. But for a compliance-focused lab where the goal is demonstrating control implementation, Wazuh wins. It gives you the evidence layer, not just the detection layer.
 
