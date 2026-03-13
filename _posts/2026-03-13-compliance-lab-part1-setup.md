@@ -33,7 +33,7 @@ Five VMs make up this lab:
 | `kali-attack` | Attack simulation | 10.10.30.10 | Workstation (vmbr3) |
 | `linux-endpoint` | OpenSCAP compliance target | 10.10.20.30 | Corporate (vmbr2) |
 
-The `linux-endpoint` VM at `10.10.20.30` is the OpenSCAP compliance target. It doesn't get much attention in Part 1 but it's the star of the compliance scanning section in Part 3.
+The `linux-endpoint` VM at `10.10.20.30` is the OpenSCAP compliance target. It doesn't get much attention in Part 1 but it's the star of the compliance scanning section in Part 2.
 
 ![Proxmox VM overview showing all lab VMs on Citadel](/assets/images/compliance-lab-01-proxmox-vm-overview.png)
 
@@ -99,7 +99,7 @@ Dashboard comes up at `https://10.10.10.20`. First login looks like this:
 
 ![Wazuh dashboard first login showing agents summary and compliance modules](/assets/images/compliance-lab-02-wazuh-dashboard-first-login.png)
 
-Notice the Security Operations section at the bottom. NIST 800-53 is already there. That's what we'll be working with in Part 3.
+Notice the Security Operations section at the bottom. NIST 800-53 is already there. That's what we'll be drawing on across Parts 2 and 3.
 
 ---
 
@@ -203,4 +203,4 @@ Part 2 is where the compliance work starts.
 
 The lab is up, the agents are reporting, and the SIEM is collecting. Infrastructure done. Now the real work starts.
 
-Part 2 maps ISO 27001 Annex A controls directly to what we just built: access control, logging, vulnerability management, incident detection. It generates the kind of compliance evidence you'd actually present in an audit. That's the part that shows up on job descriptions.
+Part 2 maps ISO 27001 Annex A controls to what we just built. Access control enforced through Group Policy. Logging and monitoring through Wazuh. Vulnerability management through OpenSCAP. Incident detection through a live brute force simulation. Each control gets real evidence behind it, the kind you'd actually present in an audit. That's the part that shows up on job descriptions.
