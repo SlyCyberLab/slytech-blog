@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Building a Security Compliance Lab from Scratch: Part 2 — Demonstrating ISO 27001 Annex A Controls"
-date: 2026-03-13
+title: "Building a Security Compliance Lab from Scratch: Part 2: Demonstrating ISO 27001 Annex A Controls"
+date: 2026-03-15
 categories: [homelab, security, compliance]
 tags: [iso27001, wazuh, openscap, activedirectory, pfsense, compliance, siem]
 ---
