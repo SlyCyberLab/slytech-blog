@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Building a Security Compliance Lab from Scratch: Part 3: Mapping to NIST CSF 2.0"
-date: 2026-03-18
+date: 2026-03-19
 categories: [homelab, security, compliance]
 tags: [nist, wazuh, openscap, pfsense, activedirectory, compliance, siem]
 ---
@@ -196,4 +196,4 @@ All of it runs on a single Proxmox node with 32GB RAM. The tools are Wazuh, Open
 
 ## What's Next
 
-Three parts, two frameworks, one lab. The series is done. Next up: PBS on Citadel to give RECOVER a stronger backup story, and Wazuh custom detection rules for writing your own SIEM alerts from scratch.
+Three parts, two frameworks, one lab. The series is done. Next up: Proxmox Backup Server (PBS) to give RECOVER a stronger backup story, and Wazuh custom detection rules for writing your own SIEM alerts from scratch.
