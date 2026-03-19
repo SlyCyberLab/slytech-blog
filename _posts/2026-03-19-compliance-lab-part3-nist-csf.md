@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Building a Security Compliance Lab from Scratch: Part 3: Mapping to NIST CSF 2.0"
+title: "Building a Security Compliance Lab from Scratch: Part 3: Mapping to NIST CSF 2.0" 
 date: 2026-03-19
 categories: [homelab, security, compliance]
 tags: [nist, wazuh, openscap, pfsense, activedirectory, compliance, siem]
