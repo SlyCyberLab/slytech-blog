@@ -6,7 +6,9 @@ categories: [homelab, security, siem]
 tags: [splunk, proxmox, windows, universal-forwarder, siem, cybersecurity, active-directory]
 ---
 
-I wanted a Splunk lab. Not a cloud trial, not a pre-built VM. An actual deployment on my own infrastructure that I could break, rebuild, and learn from. So I spun up a fresh Ubuntu Server VM on Proxmox, installed Splunk Enterprise, and wired up Universal Forwarders on two Windows endpoints. By the end of this post, I had 16 EventCode 4625 alerts hitting Splunk from a standalone Windows machine. This is Part 1 of a 3-part series.
+I wanted a Splunk lab. Not a cloud trial, not a pre-built VM. An actual deployment on my own infrastructure that I could break, rebuild, and learn from. So I spun up a fresh Ubuntu Server VM on Citadel, installed Splunk Enterprise, and wired up Universal Forwarders on two Windows endpoints. By the end of this post, I had 16 EventCode 4625 alerts hitting Splunk from a standalone Windows machine.
+
+This is Part 1 of a 3-part series. Part 2 covers SPL searches and correlation rules. Part 3 brings in MITRE ATT&CK mapping and a Splunk vs Wazuh comparison.
 
 <!--more-->
 
@@ -46,11 +48,11 @@ sudo dpkg -i splunk-10.2.1-c892b66d163d-linux-amd64.deb
 sudo /opt/splunk/bin/splunk start --accept-license --run-as-root
 ```
 
-The `-a` flag on the install script does a single-node all-in-one deployment. Manager, indexer, and dashboard all on one box. Right for a homelab, wrong for production.
+The `--accept-license` flag skips the interactive prompt and the `--run-as-root` flag is required on Ubuntu since running Splunk as root is deprecated but still functional. It installs the manager, indexer, and dashboard all on one box. Right for a homelab, wrong for production.
 
-When the install finishes it prints your admin credentials directly in the terminal. Screenshot that immediately. It only appears once.
+When the install finishes it prints your admin credentials directly in the terminal. Screenshot that immediately, it only appears once. Then Splunk starts and gives you the web interface URL.
 
-![Splunk install complete with credentials](/assets/images/splunk-02-first-start.png)
+![Splunk first start showing web interface URL](/assets/images/splunk-02-first-start.png)
 
 Enable boot-start so it survives reboots:
 
@@ -111,12 +113,12 @@ For straightforward 4625 detection, a standalone workstation like win11-002 is t
 With both forwarders running, a quick SPL search confirms what's coming in:
 
 ```
-index=main | stats count by host sourcetype | sort -count
+index=main | stats count by host
 ```
 
-![Both hosts sending data to Splunk](/assets/images/splunk-08-both-hosts-stats.png)
+![Both hosts sending data to Splunk, WIN11 with 553 events and dc01 with 2816](/assets/images/splunk-08-both-hosts-stats.png)
 
-dc01 is sending Application and System logs. win11-002 is sending Security logs including logon events.
+WIN11 has 553 events and dc01 has 2,816.
 
 ## Catching Failed Logons
 
@@ -134,4 +136,4 @@ index=main sourcetype=WinEventLog:Security EventCode=4625
 
 Part 2 covers SPL searches in depth, building correlation rules, and creating a dashboard that makes the data actually readable. Part 3 brings in MITRE ATT&CK mapping with the Security Essentials app and a comparison between Splunk and Wazuh for the same detections.
 
-If you're running a Windows-heavy homelab and want real SIEM experience on your resume, this is worth the afternoon.
+If you have a Windows lab sitting idle and want detection engineering experience that shows up in interviews, this stack is worth building.
