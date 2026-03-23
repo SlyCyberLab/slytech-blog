@@ -14,7 +14,7 @@ This is the phase where I went from "I have logs" to "I have detections." By the
 
 ## Start With a Data Inventory
 
-Before writing a single detection, I wanted to understand exactly what I was working with. This is something real SOC analysts do before touching alerts. You can't detect anomalies if you don't know what normal looks like.
+Before writing a single detection, I wanted to understand exactly what I was working with. This is something SOC analysts do before touching alerts. You can't detect anomalies if you don't know what normal looks like.
 
 The first search I ran was a simple inventory:
 
@@ -50,7 +50,7 @@ index=main sourcetype=WinEventLog:Security EventCode=4625
 | sort -count
 ```
 
-Let me break down what each piece does, because this pattern shows up in real SOC work constantly.
+Let me break down what each piece does, because this pattern shows up in SOC work constantly.
 
 `bin _time span=5m` groups all events into 5-minute buckets. Without this, you're counting totals over the whole time range, which is useless for detecting bursts of activity.
 
@@ -85,25 +85,25 @@ The alert is now live. Every 5 minutes Splunk runs that search. If any source ge
 
 A detection that only lives in the Alerts tab isn't useful during an investigation. I wanted a single view that shows the security posture of the lab at a glance. Four panels, each answering a specific question.
 
-**Panel 1 — Failed Logons by Host**
+**Panel 1: Failed Logons by Host**
 ```
 index=main sourcetype=WinEventLog:Security EventCode=4625 | stats count by host | sort -count
 ```
 Answers: which machine is being targeted most.
 
-**Panel 2 — Failed Logons Over Time**
+**Panel 2: Failed Logons Over Time**
 ```
 index=main sourcetype=WinEventLog:Security EventCode=4625 | timechart span=1h count by host
 ```
 Answers: when did the failures spike and on which host.
 
-**Panel 3 — Top Accounts Failing**
+**Panel 3: Top Accounts Failing**
 ```
 index=main sourcetype=WinEventLog:Security EventCode=4625 | stats count by Account_Name host | sort -count | head 10
 ```
 Answers: which accounts are being targeted, real or fake.
 
-**Panel 4 — Brute Force Detection**
+**Panel 4: Brute Force Detection**
 ```
 index=main sourcetype=WinEventLog:Security EventCode=4625 | bin _time span=5m | stats count by _time host Account_Name Source_Network_Address | where count >= 3 | sort -count
 ```
@@ -117,7 +117,7 @@ Four panels, four questions answered without running a single manual search. Tha
 
 ## What I Took Away From This
 
-The searches themselves aren't complicated. The thinking behind them is what matters. Understanding why you bin by time instead of counting totals, why you include the source address, why you set a threshold instead of alerting on every failure — that's the detection engineering mindset.
+The searches themselves aren't complicated. The thinking behind them is what matters. Understanding why you bin by time instead of counting totals, why you include the source address, why you set a threshold instead of alerting on every failure, that's the detection engineering mindset.
 
 Building this in a lab with real data makes that thinking stick in a way that no course or certification can replicate. I ran the attacks, I saw the events, I built the detection that would have caught them.
 
