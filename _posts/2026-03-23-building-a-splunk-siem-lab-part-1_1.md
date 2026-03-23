@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Building a Splunk SIEM Lab on Proxmox, Part 1: Install and Data Onboarding"
-date: 2026-04-22
+date: 2026-03-23
 categories: [homelab, security, siem]
 tags: [splunk, proxmox, windows, universal-forwarder, siem, cybersecurity, active-directory]
 ---
