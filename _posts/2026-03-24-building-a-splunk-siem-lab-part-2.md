@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Building a Splunk SIEM Lab on Proxmox, Part 2: SPL Searches, Alerts, and Dashboards"
-date: 2026-03-23
+date: 2026-03-24
 categories: [homelab, security, siem]
 tags: [splunk, spl, detection-engineering, windows, siem, cybersecurity, dashboard]
 ---
