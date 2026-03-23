@@ -6,7 +6,7 @@ categories: [homelab, security, siem]
 tags: [splunk, proxmox, windows, universal-forwarder, siem, cybersecurity, active-directory]
 ---
 
-I already hold the Splunk Core User cert, so I knew the product. But it was about backing up that cert with something real. A working deployment, actual Windows endpoints, actual logs flowing in. The cert gets you in the door, the lab is what you talk about once you're inside.
+I already hold the Splunk Core User certification, so I knew the product. But it was about backing up that cert with something real. A working deployment, actual Windows endpoints, actual logs flowing in. The cert gets you in the door, the lab is what you talk about once you're inside.
 
 This is Part 1 of a 3-part series. Part 2 covers SPL searches and correlation rules. Part 3 brings in MITRE ATT&CK mapping and a Splunk vs Wazuh comparison.
 
