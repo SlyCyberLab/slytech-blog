@@ -56,7 +56,7 @@ Let me break down what each piece does, because this pattern shows up in SOC wor
 
 `stats count by _time host Account_Name Source_Network_Address` gives you who is failing (Account_Name), on which machine (host), from where (Source_Network_Address), and when (grouped into those 5-minute buckets).
 
-`where count >= 3` is the threshold. Three failures in five minutes is suspicious. One failure might be a typo. Three is a pattern. Real SOC teams tune this number per environment, but 3 is a reasonable starting point for a lab.
+`where count >= 3` is the threshold. Three failures in five minutes is suspicious. One failure might be a typo. Three is a pattern. SOC teams tune this number per environment, but 3 is a reasonable starting point for a lab.
 
 ![Brute force detection results showing multiple failed logons grouped by time window and source](/assets/images/splunk-p2-03-brute-force-detection-spl.png)
 
