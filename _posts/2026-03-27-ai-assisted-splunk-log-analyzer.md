@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "I Built an AI-Assisted SOC Triage Tool on Top of My Splunk Lab"
-date: 2026-03-25
+date: 2026-03-27
 categories: [homelab, security, siem]
 tags: [splunk, python, anthropic, mitre-attack, soc, ai, threat-detection, windows-security]
 ---
