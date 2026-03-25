@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "I Added AI Triage to My Splunk Lab and It Flagged My Own Login as an Attack"
-date: 2026-03-25
+date: 2026-03-27
 categories: [homelab, security, siem]
 tags: [splunk, python, anthropic, mitre-attack, soc, ai, threat-detection, windows-security]
 ---
