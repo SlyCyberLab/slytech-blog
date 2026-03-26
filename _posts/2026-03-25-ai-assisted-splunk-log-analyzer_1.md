@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "AI-Assisted SOC Triage on Top of Splunk Using the Anthropic API"
-date: 2026-03-27
+date: 2026-03-25
 categories: [homelab, security, siem]
 tags: [splunk, python, anthropic, mitre-attack, soc, ai, threat-detection, windows-security]
 ---
