@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Building a Splunk SIEM Lab on Proxmox, Part 3: MITRE ATT&CK Mapping and Building a Complete SOC Workflow"
-date: 2026-03-24
+date: 2026-03-28
 categories: [homelab, security, siem]
 tags: [splunk, mitre-attack, detection-engineering, soc, cybersecurity, splunk-security-essentials, proxmox]
 ---
