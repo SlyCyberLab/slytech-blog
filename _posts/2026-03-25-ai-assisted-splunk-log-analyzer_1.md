@@ -11,6 +11,7 @@ I finished Part 3 of my Splunk lab series and immediately had the same thought I
 So I built a Python tool that pulls Windows Security events from Splunk, sends them to the Anthropic API, and gets back a structured SOC triage report with MITRE ATT&CK mapping. The whole thing runs in one command. The output that came back on the first real run flagged four attack patterns in my lab, including my own failed logins from a trusted VM listed as a HIGH severity brute force. That part I'll come back to.
 
 ---
+<!--more-->
 
 ## Why AI on Top of Splunk
 
