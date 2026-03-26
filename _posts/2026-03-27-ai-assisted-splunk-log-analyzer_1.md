@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "I Added AI Triage to My Splunk Lab and It Flagged My Own Login as an Attack"
+title: "AI-Assisted SOC Triage on Top of Splunk Using the Anthropic API"
 date: 2026-03-27
 categories: [homelab, security, siem]
 tags: [splunk, python, anthropic, mitre-attack, soc, ai, threat-detection, windows-security]
@@ -112,7 +112,7 @@ The two most important lines are "be direct and specific" and "do not summarize 
 
 ## Running It Against Real Lab Data
 
-Seven days of Windows Security events from Citadel: dc01.slytech.us, a domain-joined Windows 11 workstation, a standalone win11-002, and my Kali attack VM. 150 events pulled, priority sorted, sent to the API.
+Seven days of Windows Security events from Citadel: `dc01.slytech.us`, a domain-joined Windows 11 workstation, a standalone `win11-002`, and my Kali attack VM. 150 events pulled, priority sorted, sent to the API.
 
 ![Script running in terminal: retrieved 150 events, sending to Anthropic API](/assets/images/02-script-running-terminal.png)
 
@@ -180,18 +180,16 @@ The `.env.example` in the repo documents exactly what to set.
 
 ---
 
-## Is This Agentic AI?
+## Not Quite Agentic, But Getting There
 
-Not yet. You run it manually. The AI analyzes what you give it. You are still in the loop for every step.
+This version still requires you to run it manually. The AI analyzes what you give it and returns a report. You are in the loop for every step, which is fine for a first build.
 
-The follow-up post will make it autonomous: a scheduled process that monitors Splunk for new high-severity events, runs the AI analysis automatically, and sends a Telegram alert with the triage summary. That's the version where it becomes genuinely agentic, deciding what warrants a notification without you triggering each run.
-
-The asset context file comes first. Then the autonomous version.
+At some point I want to make this fully autonomous: scheduled execution, automatic Splunk queries, Telegram alerts when something real surfaces. Whether that actually works the way I'm picturing it, I genuinely don't know yet. If I get there, it'll be documented here.
 
 ---
 
 ## What's Next
 
-Two improvements before the agentic version: the asset context dictionary to reduce false positives on known-good sources, and suppression logic so the same benign pattern doesn't generate a new report every time you run it. After that, Telegram alerting and scheduled execution.
+Two improvements before anything else: an asset context file to reduce false positives on known-good sources, and suppression logic so the same pattern doesn't generate a new report every run.
 
-This AI tooling thread is running alongside the Splunk series now and they're feeding each other in ways I didn't plan for when I started either of them. If you're building something similar or you run into something I missed, let me know.
+After that, I'll attempt the autonomous version. If it works, you'll see it here.
