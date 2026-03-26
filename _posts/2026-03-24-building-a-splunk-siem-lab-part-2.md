@@ -123,4 +123,4 @@ Building this in a lab with real data makes that thinking stick in a way that no
 
 ## What's Next
 
-Part 3 maps these detections to MITRE ATT&CK, specifically T1110.001 (password guessing), using the Splunk Security Essentials app. It also compares how Splunk and Wazuh handle the same attack scenario differently, which is worth seeing side by side.
+Part 3 closes the loop by mapping these detections to MITRE ATT&CK using the Splunk Security Essentials app, cloning and customizing the detection for the Citadel lab, and tying the whole series together into a complete SOC workflow.
