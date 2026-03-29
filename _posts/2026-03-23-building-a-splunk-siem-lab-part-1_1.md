@@ -144,4 +144,4 @@ That's the point of building this stuff. The cert tells you what the concepts ar
 
 ## What's Next
 
-Part 2 covers SPL searches in depth, building correlation rules, and a dashboard that turns raw events into something readable. If you run into the same Kerberos vs NTLM issue I hit, Part 2 will cover how to search for both event types properly.
+[Part 2](https://blog.slytech.us/homelab/security/siem/2026/03/24/building-a-splunk-siem-lab-part-2.html) covers SPL searches in depth, building correlation rules, and a dashboard that turns raw events into something readable. If you run into the same Kerberos vs NTLM issue I hit, Part 2 will cover how to search for both event types properly.
