@@ -128,7 +128,7 @@ A Splunk instance ingesting Windows Security, System, and Application logs from 
 
 That is a functional detection engineering pipeline built on commodity homelab hardware.
 
-What I built on top of this is documented in a separate post: an AI-assisted triage layer that pulls events from Splunk, sends them to the Anthropic API, and returns a structured SOC report with ATT&CK mapping and triage priorities. The AI layer flagged the Hydra attack as CRITICAL, identified the sequential fakeuser accounts as T1087.001 enumeration, and correctly called my own DarkShell failed logins as HIGH severity sustained credential testing. It was right to flag all of them. Whether a source is trusted is context the tool doesn't have without you giving it that context first.
+What I built on top of this is documented in a separate post: an [AI-assisted triage layer](https://blog.slytech.us/homelab/security/siem/2026/03/25/ai-assisted-splunk-log-analyzer_1.html) that pulls events from Splunk, sends them to the Anthropic API, and returns a structured SOC report with ATT&CK mapping and triage priorities. The AI layer flagged the Hydra attack as CRITICAL, identified the sequential fakeuser accounts as T1087.001 enumeration, and correctly called my own DarkShell failed logins as HIGH severity sustained credential testing. It was right to flag all of them. Whether a source is trusted is context the tool doesn't have without you giving it that context first.
 
 That is the real lesson from this whole series. Tools detect patterns. Analysts provide context. The goal of building this lab was to understand where one ends and the other begins.
 
