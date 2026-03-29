@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Building a Splunk SIEM Lab on Proxmox, Part 3: MITRE ATT&CK Mapping and Building a Complete SOC Workflow"
-date: 2026-03-28
+date: 2026-03-24
 categories: [homelab, security, siem]
 tags: [splunk, mitre-attack, detection-engineering, soc, cybersecurity, splunk-security-essentials, proxmox]
 ---
@@ -109,23 +109,6 @@ index=main host=win11-002 EventCode=4625 earliest=-1h
 
 20 events. The `fakeuser1` through `fakeuser10` accounts from the loopback test, plus `admin` and `administrator` attempts from the network. Source addresses, account names, and counts all parsed automatically by the Windows TA.
 
-## What the ATT&CK Mapping Actually Tells You
-
-Going back to the SSE detection detail, the full ATT&CK mapping shows why this matters beyond just catching failed logins.
-
-![Full ATT&CK mapping showing Credential Access tactic, Brute Force technique, and 14 threat groups](/assets/images/splunk-p3-08-sse-attack-mapping.png)
-
-T1110 (Brute Force) has four sub-techniques that are worth understanding because they represent different attacker behaviors:
-
-**T1110.001 Password Guessing** is what we simulated. An attacker tries common passwords against known accounts. Hydra with rockyou.txt is the textbook example.
-
-**T1110.002 Password Cracking** is offline. The attacker has already obtained password hashes and is cracking them locally. No network noise, harder to detect in real time.
-
-**T1110.003 Password Spraying** tries one password against many accounts. Slower and harder to detect with simple per-account thresholds because no single account trips the count.
-
-**T1110.004 Credential Stuffing** uses leaked credential databases. The passwords being tried are real ones from previous breaches.
-
-The detection we built in Part 2 catches T1110.001 well. It would miss T1110.003 without tuning the threshold logic to look across accounts instead of per account. Understanding the sub-technique breakdown tells you exactly where your detection gaps are.
 
 ## Cloning and Customizing the Detection
 
