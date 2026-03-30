@@ -6,7 +6,7 @@ categories: [homelab, security, siem]
 tags: [splunk, spl, detection-engineering, windows, siem, cybersecurity, dashboard]
 ---
 
-Part 1 got Splunk running with Universal Forwarders on two Windows endpoints. Logs were flowing. But staring at a raw event stream isn't detection engineering, it's just data collection. Part 2 is where the actual work starts.
+[Part 1](https://blog.slytech.us/homelab/security/siem/2026/03/23/building-a-splunk-siem-lab-part-1_1.html) got Splunk running with Universal Forwarders on two Windows endpoints. Logs were flowing. But staring at a raw event stream isn't detection engineering, it's just data collection. Part 2 is where the actual work starts.
 
 This is the phase where I went from "I have logs" to "I have detections." By the end of this post I had a brute force alert running every 5 minutes and a dashboard that tells a story at a glance.
 
@@ -123,4 +123,4 @@ Building this in a lab with real data makes that thinking stick in a way that no
 
 ## What's Next
 
-Part 3 closes the loop by mapping these detections to MITRE ATT&CK using the Splunk Security Essentials app, cloning and customizing the detection for the Citadel lab, and tying the whole series together into a complete SOC workflow.
+[Part 3](https://blog.slytech.us/homelab/security/siem/2026/03/24/building-a-splunk-siem-lab-part-3.html) closes the loop by mapping these detections to MITRE ATT&CK using the Splunk Security Essentials app, cloning and customizing the detection for the Citadel lab, and tying the whole series together into a complete SOC workflow.
