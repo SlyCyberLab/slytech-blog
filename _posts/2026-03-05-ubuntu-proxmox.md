@@ -52,23 +52,3 @@ sudo apt update && sudo apt upgrade -y
 
 At this point you have a clean, updated Ubuntu Server VM ready for whatever you want to throw at it. In my case that was Wazuh, which I cover in the next post.
 
----
-
-<div style="display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.15);">
-  {% if page.previous.url %}
-  <a href="{{ page.previous.url }}" style="text-decoration: none; max-width: 45%;">
-    <div style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 0.3rem;">← Previous</div>
-    <div style="font-weight: 600;">{{ page.previous.title }}</div>
-  </a>
-  {% else %}<span></span>{% endif %}
-  {% if page.next.url %}
-  <a href="{{ page.next.url }}" style="text-decoration: none; max-width: 45%; text-align: right;">
-    <div style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 0.3rem;">Next →</div>
-    <div style="font-weight: 600;">{{ page.next.title }}</div>
-  </a>
-  {% endif %}
-</div>
-
-<div style="text-align: center; margin-top: 1.5rem;">
-  <a href="#" style="text-decoration: none; opacity: 0.6; font-size: 0.9rem;">↑ Back to top</a>
-</div>
