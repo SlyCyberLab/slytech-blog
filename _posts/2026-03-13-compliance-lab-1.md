@@ -203,4 +203,4 @@ Part 2 is where the compliance work starts.
 
 The lab is up, the agents are reporting, and the SIEM is collecting. Infrastructure done. Now the real work starts.
 
-Part 2 takes this environment and maps six ISO 27001 Annex A controls to it manually. No compliance dashboard doing the work for you. Group Policy for access control, Wazuh for logging and incident detection, OpenSCAP for vulnerability management, pfSense for network segmentation. Each one gets real evidence behind it, the kind you'd actually present in an audit. 
+[Part 2](https://blog.slytech.us/compliance-lab-2/) takes this environment and maps six ISO 27001 Annex A controls to it manually. No compliance dashboard doing the work for you. Group Policy for access control, Wazuh for logging and incident detection, OpenSCAP for vulnerability management, pfSense for network segmentation. Each one gets real evidence behind it, the kind you'd actually present in an audit.
