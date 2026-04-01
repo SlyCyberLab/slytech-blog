@@ -4,7 +4,7 @@ url: "https://blog.slytech.us"
 remote_theme: jekyll/minima
 author: Emsly
 excerpt_separator: <!--more-->
-permalink: /:title/ 
+permalink: /:title/
 minima:
   skin: solarized-dark
   date_format: "%b %-d, %Y"
@@ -15,6 +15,7 @@ minima:
   feed:
     disable: true
 plugins:
+  - jekyll-remote-theme
   - jekyll-seo-tag
   - jekyll-sitemap
   
