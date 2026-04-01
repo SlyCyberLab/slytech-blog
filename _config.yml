@@ -4,13 +4,14 @@ url: "https://blog.slytech.us"
 remote_theme: jekyll/minima
 author: Emsly
 excerpt_separator: <!--more-->
+permalink: /:title/ 
 minima:
   skin: solarized-dark
   date_format: "%b %-d, %Y"
   show_excerpts: true
   social_links:
     - { platform: github, url: "https://github.com/SlyCyberLab" }
-    - { platform: linkedin, url: "https://www.linkedin.com/in/emsly-s-482794196/" }
+    - { platform: linkedin, url: "https://www.linkedin.com/in/emsly-s" }
   feed:
     disable: true
 plugins:
