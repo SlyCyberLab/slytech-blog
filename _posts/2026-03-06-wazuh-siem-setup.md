@@ -15,7 +15,7 @@ If you're running a homelab and want to get into security monitoring without spi
 
 Most SIEM solutions are either too heavy for a homelab or locked behind a paywall. Wazuh hits the sweet spot, it gives you host-based intrusion detection, log analysis, vulnerability detection, file integrity monitoring, and compliance assessment all in one package, for free.
 
-## Before You Install, Talk About Disk Space
+## Before You Install, Talk About Disk Space 
 
 This is the part most blog posts skip and it'll waste your afternoon if you ignore it. Wazuh installs three components, the manager, the indexer, and the dashboard. The dashboard package alone is close to 1GB, and by the time everything is installed you're looking at roughly 3GB just for Wazuh on top of your OS.
 
