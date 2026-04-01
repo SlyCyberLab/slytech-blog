@@ -8,7 +8,7 @@ tags: [iso27001, wazuh, openscap, activedirectory, pfsense, compliance, siem]
 
 Security frameworks look great on a resume. They look better when you can show the evidence.
 
-Part 1 built the infrastructure: pfSense segmenting four network zones, Wazuh collecting logs from four agents, dc01 running Active Directory, and a fresh Rocky Linux 9 VM sitting in the Corporate zone waiting for its compliance scan. Part 2 is where the lab earns its name. This post maps six ISO 27001 Annex A controls to real activity in the lab and generates the kind of evidence you'd hand to an auditor.
+[Part 1](https://blog.slytech.us/compliance-lab-1/) built the infrastructure: pfSense segmenting four network zones, Wazuh collecting logs from four agents, dc01 running Active Directory, and a fresh Rocky Linux 9 VM sitting in the Corporate zone waiting for its compliance scan. Part 2 is where the lab earns its name. This post maps six ISO 27001 Annex A controls to real activity in the lab and generates the kind of evidence you'd hand to an auditor.
 
 <!--more-->
 
@@ -159,4 +159,4 @@ None of this required enterprise tooling. All of it runs on a single Proxmox nod
 
 ## What's Next
 
-Part 3 maps this same lab to NIST CSF 2.0, covering all six functions: GOVERN, IDENTIFY, PROTECT, DETECT, RESPOND, and RECOVER. The RECOVER function is where the Proxmox Backup Server setup finally gets its moment, showing how snapshot and backup strategy maps to a formal recovery control.
+[Part 3](https://blog.slytech.us/compliance-lab-3/) maps this same lab to NIST CSF 2.0, covering all six functions: GOVERN, IDENTIFY, PROTECT, DETECT, RESPOND, and RECOVER. The RECOVER function is where the Proxmox Backup Server setup finally gets its moment, showing how snapshot and backup strategy maps to a formal recovery control.
