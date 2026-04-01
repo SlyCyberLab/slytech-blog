@@ -1,8 +1,6 @@
 source "https://rubygems.org"
 
-gem "jekyll", "~> 4.3"
-gem "minima"
-gem "jekyll-seo-tag"
+gem "github-pages", group: :jekyll_plugins
+gem "jekyll-remote-theme"
 gem "jekyll-sitemap"
-gem "webrick"
-gem "wdm", ">= 0.1.0"
+gem "wdm", ">= 0.1.0", platforms: [:mingw, :x64_mingw, :mswin]
