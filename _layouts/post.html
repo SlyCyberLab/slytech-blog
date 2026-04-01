@@ -1,0 +1,56 @@
+---
+layout: default
+---
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+        {{ page.date | date: "%b %-d, %Y" }}
+      </time>
+    </p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    {{ content }}
+  </div>
+
+  <!-- Previous / Next Navigation -->
+  <nav class="post-nav" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e8e8e8; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+    {% if page.previous.url %}
+      <a href="{{ page.previous.url }}" style="text-decoration: none; color: #333; max-width: 45%;">
+        <span style="font-size: 0.85rem; color: #888; display: block;">← Previous</span>
+        <span style="font-weight: 600;">{{ page.previous.title }}</span>
+      </a>
+    {% else %}
+      <span></span>
+    {% endif %}
+
+    {% if page.next.url %}
+      <a href="{{ page.next.url }}" style="text-decoration: none; color: #333; max-width: 45%; text-align: right;">
+        <span style="font-size: 0.85rem; color: #888; display: block;">Next →</span>
+        <span style="font-weight: 600;">{{ page.next.title }}</span>
+      </a>
+    {% endif %}
+  </nav>
+
+  <!-- Back to Blog -->
+  <div style="text-align: center; margin-top: 2rem;">
+    <a href="{{ '/' | relative_url }}" style="color: #888; text-decoration: none; font-size: 0.9rem;">← Back to all posts</a>
+  </div>
+
+</article>
+
+<!-- Back to Top Button -->
+<button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
+  style="display: none; position: fixed; bottom: 2rem; right: 2rem; background: #333; color: white; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 999;">
+  ↑
+</button>
+
+<script>
+  const btn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', () => {
+    btn.style.display = window.scrollY > 400 ? 'block' : 'none';
+  });
+</script>
