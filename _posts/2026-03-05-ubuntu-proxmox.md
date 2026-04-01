@@ -51,3 +51,5 @@ sudo apt update && sudo apt upgrade -y
 ![Updates Complete](/assets/images/05-ubuntu-updates-complete.png)
 
 At this point you have a clean, updated Ubuntu Server VM ready for whatever you want to throw at it. In my case that was Wazuh, which I cover in the next post.
+
+{% if page.previous.url %}<a href="{{ page.previous.url }}">← {{ page.previous.title }}</a>{% endif %} {% if page.next.url %}<a href="{{ page.next.url }}">{{ page.next.title }} →</a>{% endif %}
