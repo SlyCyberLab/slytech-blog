@@ -27,11 +27,10 @@ layout: default
 
   <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
 
-  <!-- Previous / Next Navigation -->
-  <nav class="post-nav" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.15); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+  <nav class="post-nav" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color, rgba(255,255,255,0.15)); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
     {% if page.previous.url %}
-      <a href="{{ page.previous.url }}" style="text-decoration: none; color: inherit; max-width: 45%;">
-        <span style="font-size: 0.85rem; opacity: 0.6; display: block;">← Previous</span>
+      <a href="{{ page.previous.url }}" class="post-nav-link" style="text-decoration: none; max-width: 45%;">
+        <span class="post-meta" style="display: block;">← Previous</span>
         <span style="font-weight: 600;">{{ page.previous.title }}</span>
       </a>
     {% else %}
@@ -39,23 +38,21 @@ layout: default
     {% endif %}
 
     {% if page.next.url %}
-      <a href="{{ page.next.url }}" style="text-decoration: none; color: inherit; max-width: 45%; text-align: right;">
-        <span style="font-size: 0.85rem; opacity: 0.6; display: block;">Next →</span>
+      <a href="{{ page.next.url }}" class="post-nav-link" style="text-decoration: none; max-width: 45%; text-align: right;">
+        <span class="post-meta" style="display: block;">Next →</span>
         <span style="font-weight: 600;">{{ page.next.title }}</span>
       </a>
     {% endif %}
   </nav>
 
-  <!-- Back to Blog -->
   <div style="text-align: center; margin-top: 2rem;">
-    <a href="{{ '/' | relative_url }}" style="opacity: 0.6; text-decoration: none; font-size: 0.9rem;">← Back to all posts</a>
+    <a href="{{ '/' | relative_url }}" class="post-meta" style="text-decoration: none; font-size: 0.9rem;">← Back to all posts</a>
   </div>
 
 </article>
 
-<!-- Back to Top Button -->
 <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-  style="display: none; position: fixed; bottom: 2rem; right: 2rem; background: rgba(255,255,255,0.15); color: inherit; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 999;">
+  style="display: none; position: fixed; bottom: 2rem; right: 2rem; background: var(--brand-color, #333); color: var(--background-color, white); border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 999;">
   ↑
 </button>
 
