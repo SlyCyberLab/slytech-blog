@@ -17,3 +17,4 @@ minima:
 plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
+  
