@@ -17,40 +17,6 @@ layout: default
     {{ content }}
   </div>
 
-  <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
-
-  <nav class="post-nav" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.15); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-    {% if page.previous.url %}
-      <a href="{{ page.previous.url }}" style="text-decoration: none; max-width: 45%;">
-        <span style="font-size: 0.85rem; display: block; opacity: 0.6;">← Previous</span>
-        <span style="font-weight: 600;">{{ page.previous.title }}</span>
-      </a>
-    {% else %}
-      <span></span>
-    {% endif %}
-
-    {% if page.next.url %}
-      <a href="{{ page.next.url }}" style="text-decoration: none; max-width: 45%; text-align: right;">
-        <span style="font-size: 0.85rem; display: block; opacity: 0.6;">Next →</span>
-        <span style="font-weight: 600;">{{ page.next.title }}</span>
-      </a>
-    {% endif %}
-  </nav>
-
-  <div style="text-align: center; margin-top: 2rem;">
-    <a href="{{ '/' | relative_url }}" style="font-size: 0.9rem; opacity: 0.6; text-decoration: none;">← Back to all posts</a>
-  </div>
+  {% include post-nav.html %}
 
 </article>
-
-<button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-  style="display: none; position: fixed; bottom: 2rem; right: 2rem; background: #4a9eff; color: white; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.4); z-index: 999;">
-  ↑
-</button>
-
-<script>
-  const btn = document.getElementById('back-to-top');
-  window.addEventListener('scroll', () => {
-    btn.style.display = window.scrollY > 400 ? 'block' : 'none';
-  });
-</script>
