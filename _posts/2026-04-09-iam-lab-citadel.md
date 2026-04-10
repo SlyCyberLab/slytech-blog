@@ -6,7 +6,11 @@ categories: [homelab, security, activedirectory]
 tags: [iam, active-directory, powershell, gpo, access-review, windows-server, identity]
 ---
 
-IAM is one of those areas that looks straightforward on paper and gets complicated fast once you're actually doing it. Provisioning a user isn't just running New-ADUser. It's OU placement, group assignment, password policy, audit logging, and making sure the account is actually ready before the person's first day. This lab covers all of it, built end to end on Citadel with real scripts, real logs, and real GPOs.
+IAM sits at the intersection of security, compliance, and day-to-day IT operations. It's what controls who gets access, to what, and for how long. One misconfigured account, one stale user that never got deprovisioned, one group with permissions broader than they should be, and you have a problem that no firewall catches. It's one of those disciplines that looks straightforward on paper until you're actually doing it.
+
+<!--more-->
+
+Provisioning a user isn't just running New-ADUser. It's OU placement, group assignment, password policy, audit logging, and making sure the account is actually ready before the person's first day. This lab covers all of it, built end to end on Citadel with real scripts, real logs, and real GPOs.
 
 Five scenarios: provisioning and deprovisioning workflows in PowerShell, an OU and group structure built around least-privilege, a quarterly access review simulation with output you could hand to a manager, and GPO-based access control scoped per department.
 
