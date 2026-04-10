@@ -10,7 +10,7 @@ IAM sits at the intersection of security, compliance, and day-to-day IT operatio
 
 <!--more-->
 
-Provisioning a user isn't just running New-ADUser. It's OU placement, group assignment, password policy, audit logging, and making sure the account is actually ready before the person's first day. This lab covers all of it, built end to end on Citadel with real scripts, real logs, and real GPOs.
+Provisioning a user isn't just running New-ADUser. It's OU placement, group assignment, password policy, audit logging, and making sure the account is actually ready before the person's first day. This lab covers all of it, built end to end on Citadel (my Proxmox security node) with real scripts, real logs, and real GPOs.
 
 Five scenarios: provisioning and deprovisioning workflows in PowerShell, an OU and group structure built around least-privilege, a quarterly access review simulation with output you could hand to a manager, and GPO-based access control scoped per department.
 
