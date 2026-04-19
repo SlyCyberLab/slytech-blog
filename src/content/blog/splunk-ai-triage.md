@@ -92,7 +92,7 @@ The fix was a priority sort in the SPL query itself. Failed logons get pulled fi
 
 After that change, the output got interesting fast.
 
-![Splunk web UI showing 220,436 events across 7 days with the search query running](/images/01-splunk-search-results.png)
+![Splunk web UI showing 220,436 events across 7 days with the search query running](/public/images/01-splunk-search-results.png)
 
 ---
 
@@ -123,11 +123,11 @@ The two most important lines are "be direct and specific" and "do not summarize 
 
 Seven days of Windows Security events from Citadel: `dc01.slytech.us`, a domain-joined Windows 11 workstation, a standalone `win11-002`, and my Kali attack VM. 150 events pulled, priority sorted, sent to the API.
 
-![Script running in terminal: retrieved 150 events, sending to Anthropic API](/images/02-script-running-terminal.png)
+![Script running in terminal: retrieved 150 events, sending to Anthropic API](/public/images/02-script-running-terminal.png)
 
 The executive summary came back with something I did not expect to see framed that way:
 
-![AI triage executive summary showing multiple active brute force attacks detected](/images/03a-ai-triage-executive-summary.png)
+![AI triage executive summary showing multiple active brute force attacks detected](/public/images/03a-ai-triage-executive-summary.png)
 
 Four findings. Here is what the AI identified across the 7-day window:
 
@@ -145,13 +145,13 @@ Failed logons with sub-status 0xC0000064 (user does not exist) from WIN11 agains
 **MEDIUM: Local account enumeration on win11-002**
 Sequential fakeuser1 through fakeuser10 attempts from localhost. The AI recognized the sequential naming pattern as scripted enumeration and called it T1087.001. Also me, testing.
 
-![Key findings showing all four attack patterns with MITRE ATT&CK mapping](/images/03b-ai-triage-key-findings.png)
+![Key findings showing all four attack patterns with MITRE ATT&CK mapping](/public/images/03b-ai-triage-key-findings.png)
 
-![Terminal showing report saved to timestamped file and analysis complete](/images/04-triage-report-saved.png)
+![Terminal showing report saved to timestamped file and analysis complete](/public/images/04-triage-report-saved.png)
 
 Every run saves a timestamped report file with the full analysis and raw events appended. Useful for lab documentation and for showing the before/after when you tune detections.
 
-![Cat of the saved triage report showing 150 events analyzed and executive summary](/images/05-triage-report-file-contents.png)
+![Cat of the saved triage report showing 150 events analyzed and executive summary](/public/images/05-triage-report-file-contents.png)
 
 ---
 
@@ -171,11 +171,11 @@ This is exactly what Tier 1 SOC analysts deal with every shift. The SIEM fires. 
 
 Everything is at [github.com/SlyCyberLab/slytech-ai-labs](https://github.com/SlyCyberLab/slytech-ai-labs) under `01-splunk-log-analyzer/`.
 
-![GitHub repo showing project structure with all files and commit history](/images/06-github-repo-files.png)
+![GitHub repo showing project structure with all files and commit history](/public/images/06-github-repo-files.png)
 
-![Script configuration block showing event codes and environment variable credential handling](/images/07-github-script-code.png)
+![Script configuration block showing event codes and environment variable credential handling](/public/images/07-github-script-code.png)
 
-![AI prompt engineering section of the script showing system and user prompts](/images/08-github-script-prompt.png)
+![AI prompt engineering section of the script showing system and user prompts](/public/images/08-github-script-prompt.png)
 
 To run it you need Splunk with Windows Security events indexed and an Anthropic API key. Set both as environment variables. Never hardcode credentials in anything you push to GitHub.
 
