@@ -52,7 +52,7 @@ const shareUrl = `https://blog.slytech.us/blog/${entry.slug}`;
     <article class="post-article">
       <header class="post-header">
         <div class="post-meta-top">
-          <span class:list={['cat-pill', category]}>{category}</span>
+          <span class="cat-pill" data-cat={category}>{category}</span>
           <span class="mono" style="font-size:0.75rem;color:var(--color-text-muted);">
             {formatDate(date)}
           </span>

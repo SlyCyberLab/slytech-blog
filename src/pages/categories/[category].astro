@@ -22,7 +22,7 @@ const posts = (await getCollection('blog'))
 >
   <div class="container" style="padding-top:3rem;padding-bottom:5rem;">
     <div style="margin-bottom:2rem;">
-      <span class:list={['cat-pill', category]} style="font-size:0.75rem;">{category}</span>
+      <span class="cat-pill" data-cat={category} style="font-size:0.75rem;">{category}</span>
       <h1 style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;color:#fff;margin-top:0.75rem;">
         {category.charAt(0).toUpperCase() + category.slice(1)}
       </h1>

@@ -252,9 +252,9 @@ img {
   border: 1px solid currentColor;
 }
 
-.cat-pill.detection { color: var(--cat-detection); background: rgba(0,255,136,0.08); }
-.cat-pill.compliance { color: var(--cat-compliance); background: rgba(251,146,60,0.08); }
-.cat-pill.homelab { color: var(--cat-homelab); background: rgba(79,209,255,0.08); }
-.cat-pill.cloud { color: var(--cat-cloud); background: rgba(167,139,250,0.08); }
-.cat-pill.iam { color: var(--cat-iam); background: rgba(251,191,36,0.08); }
-.cat-pill.career { color: var(--cat-career); background: rgba(244,114,182,0.08); }
+.cat-pill[data-cat="detection"] { color: var(--cat-detection); border-color: var(--cat-detection); background: rgba(0,255,136,0.08); }
+.cat-pill[data-cat="compliance"] { color: var(--cat-compliance); border-color: var(--cat-compliance); background: rgba(251,146,60,0.08); }
+.cat-pill[data-cat="homelab"] { color: var(--cat-homelab); border-color: var(--cat-homelab); background: rgba(79,209,255,0.08); }
+.cat-pill[data-cat="cloud"] { color: var(--cat-cloud); border-color: var(--cat-cloud); background: rgba(167,139,250,0.08); }
+.cat-pill[data-cat="iam"] { color: var(--cat-iam); border-color: var(--cat-iam); background: rgba(251,191,36,0.08); }
+.cat-pill[data-cat="career"] { color: var(--cat-career); border-color: var(--cat-career); background: rgba(244,114,182,0.08); }
