@@ -1,0 +1,68 @@
+---
+interface Props {
+  opacity?: number;
+}
+const { opacity = 0.08 } = Astro.props;
+---
+
+<canvas id="matrix-canvas" style={`opacity: ${opacity};`}></canvas>
+
+<style>
+  #matrix-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+</style>
+
+<script>
+  const canvas = document.getElementById('matrix-canvas') as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d')!;
+
+  const CHARS = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789ABCDEF';
+  const FONT_SIZE = 14;
+  let cols: number[] = [];
+  let animId: number;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const count = Math.floor(canvas.width / FONT_SIZE);
+    cols = Array(count).fill(1);
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#00ff88';
+    ctx.font = `${FONT_SIZE}px "JetBrains Mono", monospace`;
+
+    cols.forEach((y, i) => {
+      const char = CHARS[Math.floor(Math.random() * CHARS.length)];
+      const x = i * FONT_SIZE;
+      ctx.fillText(char, x, y * FONT_SIZE);
+      if (y * FONT_SIZE > canvas.height && Math.random() > 0.975) {
+        cols[i] = 0;
+      }
+      cols[i]++;
+    });
+
+    animId = requestAnimationFrame(draw);
+  }
+
+  resize();
+  draw();
+
+  const ro = new ResizeObserver(resize);
+  ro.observe(document.documentElement);
+
+  document.addEventListener('astro:before-swap', () => {
+    cancelAnimationFrame(animId);
+    ro.disconnect();
+  });
+</script>

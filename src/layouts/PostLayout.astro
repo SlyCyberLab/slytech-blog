@@ -1,0 +1,376 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { readingTime, formatDate } from '@/utils/readingTime';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'blog'>;
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { entry, headings } = Astro.props;
+const { title, date, description, category, tags } = entry.data;
+const timeToRead = readingTime(entry.body);
+
+const h2Headings = headings.filter(h => h.depth === 2);
+
+const allPosts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const idx = allPosts.findIndex(p => p.slug === entry.slug);
+const prev = idx < allPosts.length - 1 ? allPosts[idx + 1] : null;
+const next = idx > 0 ? allPosts[idx - 1] : null;
+
+const shareUrl = `https://blog.slytech.us/blog/${entry.slug}`;
+---
+
+<BaseLayout title={title} description={description} matrixOpacity={0.03}>
+  <div id="reading-progress"></div>
+
+  <div class="post-wrap container">
+    <!-- Left sidebar ToC -->
+    <aside class="toc-sidebar" id="toc">
+      <div class="toc-inner">
+        <p class="toc-label mono">Contents</p>
+        <nav class="toc-nav">
+          {h2Headings.map((h, i) => (
+            <a
+              href={`#${h.slug}`}
+              class="toc-link"
+              data-slug={h.slug}
+            >
+              <span class="toc-num mono">{String(i + 1).padStart(2, '0')}</span>
+              <span class="toc-text">{h.text}</span>
+            </a>
+          ))}
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Right column -->
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-meta-top">
+          <span class:list={['cat-pill', category]}>{category}</span>
+          <span class="mono" style="font-size:0.75rem;color:var(--color-text-muted);">
+            {formatDate(date)}
+          </span>
+          <span class="mono" style="font-size:0.75rem;color:var(--color-text-muted);">
+            {timeToRead}
+          </span>
+        </div>
+        <h1 class="post-title">{title}</h1>
+        <p class="post-lede">{description}</p>
+      </header>
+
+      <div class="prose">
+        <slot />
+      </div>
+
+      <!-- Tags row -->
+      {tags.length > 0 && (
+        <div class="post-tags">
+          {tags.map(tag => (
+            <span class="tag mono">#{tag}</span>
+          ))}
+        </div>
+      )}
+
+      <!-- Share -->
+      <div class="post-share">
+        <button class="share-btn mono" id="share-btn" data-url={shareUrl} data-title={title}>
+          Share Post
+        </button>
+      </div>
+
+      <!-- Prev / Next -->
+      <nav class="post-nav">
+        {prev && (
+          <a href={`/blog/${prev.slug}`} class="post-nav-card prev">
+            <span class="mono" style="font-size:0.7rem;color:var(--color-text-muted);">← Previous</span>
+            <span class="post-nav-title">{prev.data.title}</span>
+          </a>
+        )}
+        {next && (
+          <a href={`/blog/${next.slug}`} class="post-nav-card next">
+            <span class="mono" style="font-size:0.7rem;color:var(--color-text-muted);">Next →</span>
+            <span class="post-nav-title">{next.data.title}</span>
+          </a>
+        )}
+      </nav>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  #reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: var(--color-accent);
+    z-index: 200;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  .post-wrap {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 3rem;
+    padding-top: 3rem;
+    padding-bottom: 5rem;
+    align-items: start;
+  }
+
+  .toc-sidebar {
+    position: sticky;
+    top: calc(var(--nav-height) + 1.5rem);
+  }
+
+  .toc-inner {
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    background: var(--color-surface);
+  }
+
+  .toc-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .toc-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .toc-link {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    transition: color 0.15s, background 0.15s;
+    border-left: 2px solid transparent;
+  }
+
+  .toc-link:hover {
+    color: var(--color-text);
+    background: var(--color-surface-2);
+  }
+
+  .toc-link.active {
+    color: var(--color-accent);
+    border-left-color: var(--color-accent);
+    background: var(--color-accent-dim);
+  }
+
+  .toc-num {
+    font-size: 0.65rem;
+    color: var(--color-text-subtle);
+    min-width: 1.5rem;
+    padding-top: 0.1rem;
+    flex-shrink: 0;
+  }
+
+  .toc-link.active .toc-num {
+    color: var(--color-accent);
+  }
+
+  .post-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .post-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .post-title {
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    font-weight: 700;
+    line-height: 1.25;
+    color: #fff;
+    margin-bottom: 0.875rem;
+  }
+
+  .post-lede {
+    font-style: italic;
+    color: var(--color-text-muted);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 0.2em 0.6em;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .tag:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .post-share {
+    margin-top: 1.5rem;
+  }
+
+  .share-btn {
+    font-size: 0.8rem;
+    color: var(--color-bg);
+    background: var(--color-accent);
+    border: none;
+    border-radius: 5px;
+    padding: 0.55rem 1.25rem;
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    transition: opacity 0.15s;
+  }
+
+  .share-btn:hover { opacity: 0.85; }
+
+  .post-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .post-nav-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .post-nav-card:hover {
+    border-color: var(--color-accent);
+    background: var(--color-surface-2);
+  }
+
+  .post-nav-card.next {
+    text-align: right;
+    grid-column: 2;
+  }
+
+  .post-nav-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text);
+    line-height: 1.4;
+  }
+
+  @media (max-width: 900px) {
+    .post-wrap {
+      grid-template-columns: 1fr;
+    }
+    .toc-sidebar {
+      display: none;
+    }
+    .post-nav {
+      grid-template-columns: 1fr;
+    }
+    .post-nav-card.next {
+      grid-column: 1;
+      text-align: left;
+    }
+  }
+</style>
+
+<script>
+  // Reading progress bar
+  const bar = document.getElementById('reading-progress') as HTMLDivElement;
+  const article = document.querySelector('.post-article') as HTMLElement;
+
+  function updateProgress() {
+    if (!article || !bar) return;
+    const rect = article.getBoundingClientRect();
+    const total = article.offsetHeight - window.innerHeight;
+    const scrolled = Math.max(0, -rect.top);
+    const pct = Math.min(100, (scrolled / total) * 100);
+    bar.style.width = pct + '%';
+  }
+
+  window.addEventListener('scroll', updateProgress, { passive: true });
+
+  // ToC active state via IntersectionObserver
+  const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
+  const headingEls = document.querySelectorAll<HTMLHeadingElement>('.post-article h2');
+
+  if (tocLinks.length && headingEls.length) {
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            tocLinks.forEach(l => l.classList.remove('active'));
+            const active = document.querySelector(`.toc-link[data-slug="${entry.target.id}"]`);
+            active?.classList.add('active');
+          }
+        });
+      },
+      { rootMargin: '-60px 0px -70% 0px' }
+    );
+
+    headingEls.forEach(el => observer.observe(el));
+  }
+
+  // Share button
+  const shareBtn = document.getElementById('share-btn') as HTMLButtonElement;
+  shareBtn?.addEventListener('click', async () => {
+    const url = shareBtn.dataset.url!;
+    const title = shareBtn.dataset.title!;
+    if (navigator.share) {
+      await navigator.share({ title, url });
+    } else {
+      await navigator.clipboard.writeText(url);
+      shareBtn.textContent = 'Copied!';
+      setTimeout(() => (shareBtn.textContent = 'Share Post'), 2000);
+    }
+  });
+
+  // Language labels on code blocks
+  document.querySelectorAll('.prose pre').forEach(pre => {
+    const code = pre.querySelector('code');
+    const lang = code?.getAttribute('data-language') || code?.className.replace(/language-/, '');
+    if (lang && lang !== 'undefined') {
+      const label = document.createElement('span');
+      label.className = 'language-label';
+      label.textContent = lang;
+      pre.appendChild(label);
+    }
+  });
+</script>

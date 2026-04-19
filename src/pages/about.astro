@@ -1,0 +1,57 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About"
+  description="About SlyTech Blog — homelab builds, cybersecurity lab work, and infrastructure projects."
+  matrixOpacity={0.03}
+>
+  <div class="container" style="padding-top:3.5rem;padding-bottom:6rem;max-width:760px;">
+    <div class="about-header">
+      <span class="mono" style="font-size:0.75rem;color:var(--color-accent);letter-spacing:0.1em;">ABOUT</span>
+      <h1 style="font-size:clamp(1.6rem,3vw,2rem);font-weight:700;color:#fff;margin-top:0.75rem;line-height:1.25;">
+        SlyTech Blog
+      </h1>
+    </div>
+
+    <div class="prose">
+      <p>
+        This is where I document my homelab builds, cybersecurity lab work, and infrastructure
+        projects. The goal is to build things that actually work in a real SOC environment, not
+        just toys that pass a certification exam.
+      </p>
+
+      <h2>What I'm building</h2>
+      <p>
+        My homelab runs on Proxmox with a dedicated cybersecurity lab server called Citadel.
+        Current stack includes Wazuh for SIEM, Splunk for log analysis and detection engineering,
+        pfSense for network segmentation, and a rotating set of VMs for whatever I'm working
+        through that week. Every post here is something I actually built and ran.
+      </p>
+
+      <h2>Categories</h2>
+      <ul>
+        <li><strong style="color:var(--cat-detection)">Detection</strong> — SIEM setups, detection rules, SOC workflows, MITRE ATT&CK mapping</li>
+        <li><strong style="color:var(--cat-compliance)">Compliance</strong> — ISO 27001, NIST CSF, OpenSCAP, evidence collection</li>
+        <li><strong style="color:var(--cat-homelab)">Homelab</strong> — Proxmox, networking, VMs, infrastructure</li>
+        <li><strong style="color:var(--cat-cloud)">Cloud</strong> — Azure, cloud security, cloud-native labs</li>
+        <li><strong style="color:var(--cat-iam)">IAM</strong> — Identity, access management, Active Directory</li>
+        <li><strong style="color:var(--cat-career)">Career</strong> — Certs, learning paths, thoughts on breaking into cybersecurity</li>
+      </ul>
+
+      <h2>Find me</h2>
+      <p>
+        Portfolio and other projects at <a href="https://slytech.us">slytech.us</a>.
+      </p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+</style>

@@ -1,0 +1,258 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { readingTime, formatDate } from '@/utils/readingTime';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const categories = ['ALL', 'DETECTION', 'COMPLIANCE', 'HOMELAB', 'CLOUD', 'IAM', 'CAREER'] as const;
+---
+
+<BaseLayout
+  title="SlyTech Blog"
+  description="Homelab builds, cybersecurity labs, and infrastructure projects by SlyTech."
+  matrixOpacity={0.08}
+>
+  <div class="container">
+    <!-- Terminal intro -->
+    <section class="hero">
+      <div class="terminal-line">
+        <span class="terminal-prompt mono">emsly@slytech:~/blog$</span>
+        <span class="terminal-cmd mono"> cat README.md</span>
+        <span class="terminal-cursor mono">▋</span>
+      </div>
+      <div class="hero-desc">
+        <p>
+          Documenting homelab builds, cybersecurity lab work, and infrastructure projects.
+          Detection engineering, compliance frameworks, cloud setups, and the occasional deep-dive
+          into whatever I'm learning this week.
+        </p>
+      </div>
+    </section>
+
+    <!-- Category filter -->
+    <div class="filter-bar" id="filter-bar">
+      {categories.map(cat => (
+        <button
+          class:list={['filter-btn', 'mono', { active: cat === 'ALL' }]}
+          data-cat={cat.toLowerCase()}
+        >
+          {cat}
+        </button>
+      ))}
+    </div>
+
+    <!-- Post list -->
+    <div class="post-list" id="post-list">
+      {posts.map(post => {
+        const { title, date, description, category, tags } = post.data;
+        const rt = readingTime(post.body);
+        return (
+          <article
+            class="post-row"
+            data-category={category}
+          >
+            <div class="post-row-meta">
+              <span class:list={['cat-pill', category]}>{category}</span>
+              <span class="mono post-row-date">{formatDate(date)}</span>
+              <span class="mono post-row-rt">{rt}</span>
+            </div>
+            <a href={`/blog/${post.slug}`} class="post-row-title">{title}</a>
+            <p class="post-row-excerpt">{description}</p>
+            {tags.length > 0 && (
+              <div class="post-row-tags">
+                {tags.map(tag => (
+                  <span class="post-tag mono">#{tag}</span>
+                ))}
+              </div>
+            )}
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .container {
+    padding-top: 3.5rem;
+    padding-bottom: 6rem;
+  }
+
+  /* ─── Hero ─────────────────────────────────────────────────────── */
+
+  .hero {
+    margin-bottom: 3rem;
+  }
+
+  .terminal-line {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .terminal-prompt {
+    color: var(--color-accent);
+    font-size: 0.95rem;
+  }
+
+  .terminal-cmd {
+    color: var(--color-text);
+    font-size: 0.95rem;
+  }
+
+  .terminal-cursor {
+    color: var(--color-accent);
+    font-size: 0.95rem;
+    animation: blink 1.1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .hero-desc {
+    max-width: 680px;
+    color: var(--color-text-muted);
+    font-size: 1.05rem;
+    line-height: 1.75;
+    border-left: 2px solid var(--color-border);
+    padding-left: 1.25rem;
+  }
+
+  /* ─── Filter bar ────────────────────────────────────────────────── */
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .filter-btn {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    padding: 0.35em 0.9em;
+    border-radius: 5px;
+    border: 1px solid var(--color-border);
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+
+  .filter-btn:hover {
+    color: var(--color-text);
+    border-color: #444;
+  }
+
+  .filter-btn.active {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background: var(--color-accent-dim);
+  }
+
+  /* ─── Post list ─────────────────────────────────────────────────── */
+
+  .post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .post-row {
+    padding: 1.75rem 0;
+    border-bottom: 1px solid var(--color-border);
+    transition: background 0.15s;
+  }
+
+  .post-row:first-child {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .post-row-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .post-row-date, .post-row-rt {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .post-row-rt {
+    margin-left: auto;
+  }
+
+  .post-row-title {
+    display: block;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.6rem;
+    line-height: 1.35;
+    transition: color 0.15s;
+  }
+
+  .post-row-title:hover {
+    color: var(--color-accent);
+  }
+
+  .post-row-excerpt {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.65;
+    max-width: 80ch;
+    margin-bottom: 0.75rem;
+  }
+
+  .post-row-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .post-tag {
+    font-size: 0.7rem;
+    color: var(--color-text-subtle);
+    transition: color 0.15s;
+  }
+
+  .post-tag:hover {
+    color: var(--color-accent);
+  }
+
+  .post-row.hidden {
+    display: none;
+  }
+</style>
+
+<script>
+  const filterBar = document.getElementById('filter-bar')!;
+  const postList = document.getElementById('post-list')!;
+
+  filterBar.addEventListener('click', e => {
+    const btn = (e.target as HTMLElement).closest('.filter-btn') as HTMLButtonElement | null;
+    if (!btn) return;
+
+    filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const cat = btn.dataset.cat!;
+    postList.querySelectorAll<HTMLElement>('.post-row').forEach(row => {
+      if (cat === 'all' || row.dataset.category === cat) {
+        row.classList.remove('hidden');
+      } else {
+        row.classList.add('hidden');
+      }
+    });
+  });
+</script>

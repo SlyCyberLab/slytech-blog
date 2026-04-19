@@ -1,0 +1,94 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { readingTime, formatDate } from '@/utils/readingTime';
+
+export async function getStaticPaths() {
+  const cats = ['detection', 'compliance', 'homelab', 'cloud', 'iam', 'career'] as const;
+  return cats.map(category => ({ params: { category } }));
+}
+
+const { category } = Astro.params as { category: string };
+
+const posts = (await getCollection('blog'))
+  .filter(p => p.data.category === category)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout
+  title={`${category.charAt(0).toUpperCase() + category.slice(1)} — SlyTech Blog`}
+  description={`Posts in the ${category} category on SlyTech Blog.`}
+  matrixOpacity={0.03}
+>
+  <div class="container" style="padding-top:3rem;padding-bottom:5rem;">
+    <div style="margin-bottom:2rem;">
+      <span class:list={['cat-pill', category]} style="font-size:0.75rem;">{category}</span>
+      <h1 style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;color:#fff;margin-top:0.75rem;">
+        {category.charAt(0).toUpperCase() + category.slice(1)}
+      </h1>
+      <p style="color:var(--color-text-muted);margin-top:0.5rem;">
+        {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+      </p>
+    </div>
+
+    <div class="post-list">
+      {posts.map(post => {
+        const { title, date, description, tags } = post.data;
+        const rt = readingTime(post.body);
+        return (
+          <article class="post-row">
+            <div class="post-row-meta">
+              <span class="mono" style="font-size:0.75rem;color:var(--color-text-muted);">{formatDate(date)}</span>
+              <span class="mono" style="font-size:0.75rem;color:var(--color-text-muted);margin-left:auto;">{rt}</span>
+            </div>
+            <a href={`/blog/${post.slug}`} class="post-row-title">{title}</a>
+            <p class="post-row-excerpt">{description}</p>
+            {tags.length > 0 && (
+              <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+                {tags.map(tag => (
+                  <span class="mono" style="font-size:0.7rem;color:var(--color-text-subtle);">#{tag}</span>
+                ))}
+              </div>
+            )}
+          </article>
+        );
+      })}
+      {posts.length === 0 && (
+        <p style="color:var(--color-text-muted);">No posts in this category yet.</p>
+      )}
+    </div>
+
+    <a href="/" class="back-link mono">← All posts</a>
+  </div>
+</BaseLayout>
+
+<style>
+  .post-list { display:flex; flex-direction:column; }
+  .post-row {
+    padding: 1.75rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .post-row:first-child { border-top: 1px solid var(--color-border); }
+  .post-row-meta { display:flex; gap:0.75rem; margin-bottom:0.75rem; }
+  .post-row-title {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.6rem;
+    transition: color 0.15s;
+  }
+  .post-row-title:hover { color: var(--color-accent); }
+  .post-row-excerpt { font-size:0.9rem; color:var(--color-text-muted); line-height:1.65; margin-bottom:0.75rem; }
+  .back-link {
+    display: inline-block;
+    margin-top: 2.5rem;
+    font-size: 0.8rem;
+    color: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    padding: 0.4rem 1rem;
+    border-radius: 5px;
+    transition: background 0.15s;
+  }
+  .back-link:hover { background: var(--color-accent-dim); }
+</style>
