@@ -50,7 +50,7 @@ curl -sO https://packages.wazuh.com/4.11/wazuh-install.sh && sudo bash ./wazuh-i
 
 It takes about 10-15 minutes. When it finishes it prints your admin credentials directly in the terminal. Screenshot that immediately, it only shows once.
 
-![Wazuh Install Complete](/images/06-wazuh-install-complete.png)
+![Wazuh Install Complete](/public/images/06-wazuh-install-complete.png)
 
 ## First Login
 
@@ -58,7 +58,7 @@ Head to `https://<your-server-ip>` in your browser. You'll get a certificate war
 
 The dashboard already shows activity even before you connect any agents. It's monitoring the Wazuh server itself, so you'll see alerts firing right away.
 
-![Wazuh Dashboard](/images/07-wazuh-dashboard-first-login.png)
+![Wazuh Dashboard](/public/images/07-wazuh-dashboard-first-login.png)
 
 ## Adding Agents
 
@@ -66,17 +66,17 @@ Click Deploy new agent in the dashboard and follow the prompts for your OS. Wazu
 
 Right now I'm monitoring five endpoints across my homelab, two Macs, my main Proxmox server Forge, DarkShell my Windows VM, and OpenClaw my autonomous AI agent box. Each one connected without any issues.
 
-![Agents List](/images/08-wazuh-agents-list.png)
+![Agents List](/public/images/08-wazuh-agents-list.png)
 
 ## Catching Real Events
 
 To test detection I ran deliberate failed SSH login attempts against Forge. Wazuh caught them and logged them alongside everything else it was already tracking. Over 30 days on Forge alone it recorded 1,427 total events, 106 authentication failures, and 262 successful authentications.
 
-![Threat Hunting Dashboard](/images/09-wazuh-threat-hunting-forge.png)
+![Threat Hunting Dashboard](/public/images/09-wazuh-threat-hunting-forge.png)
 
 Seeing your own activity show up as security events makes the whole thing click in a way that reading about SIEMs never does.
 
-![SSH Failures](/images/10-wazuh-ssh-failures.png)
+![SSH Failures](/public/images/10-wazuh-ssh-failures.png)
 
 ## What's Next
 
