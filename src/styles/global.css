@@ -262,3 +262,74 @@ img {
 .cat-pill[data-cat="cloud"] { color: var(--cat-cloud); border-color: var(--cat-cloud); background: rgba(167,139,250,0.08); }
 .cat-pill[data-cat="iam"] { color: var(--cat-iam); border-color: var(--cat-iam); background: rgba(251,191,36,0.08); }
 .cat-pill[data-cat="career"] { color: var(--cat-career); border-color: var(--cat-career); background: rgba(244,114,182,0.08); }
+
+/* ─── Mobile prose ──────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .prose {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  .prose p,
+  .prose li,
+  .prose blockquote {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  .prose h2 {
+    font-size: 1.15rem;
+    margin-top: 2rem;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  .prose h3 {
+    font-size: 1rem;
+    margin-top: 1.5rem;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  .prose img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 1.25rem 0;
+  }
+
+  /* Wrap pre in a scrollable container on mobile */
+  .prose pre {
+    font-size: 0.78rem;
+    padding: 2.5rem 1rem 1rem !important;
+    border-radius: 6px;
+    margin: 1.25rem -1rem;   /* bleed to screen edge for more code width */
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+  }
+
+  /* Tables: horizontal scroll */
+  .prose table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.85rem;
+  }
+
+  .prose ul,
+  .prose ol {
+    padding-left: 1.25rem;
+  }
+
+  .prose hr {
+    margin: 1.75rem 0;
+  }
+}
