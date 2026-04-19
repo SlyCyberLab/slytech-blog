@@ -122,6 +122,7 @@ const shareUrl = `https://blog.slytech.us/blog/${entry.slug}`;
     padding-top: 3rem;
     padding-bottom: 5rem;
     align-items: start;
+    overflow-x: hidden;
   }
 
   .toc-sidebar {
@@ -205,6 +206,9 @@ const shareUrl = `https://blog.slytech.us/blog/${entry.slug}`;
     line-height: 1.25;
     color: #fff;
     margin-bottom: 0.875rem;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   .post-lede {
@@ -212,6 +216,9 @@ const shareUrl = `https://blog.slytech.us/blog/${entry.slug}`;
     color: var(--color-text-muted);
     font-size: 1.05rem;
     line-height: 1.6;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   .post-tags {
