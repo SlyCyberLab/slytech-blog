@@ -19,7 +19,7 @@ Privileged Access Management exists to stop exactly that. This lab builds a full
 
 
 
-![PAM lab architecture](/images/00-pam-lab-architecture.png)
+![PAM lab architecture](/public/images/00-pam-lab-architecture.png)
 
 Everything is built on dc01 (Windows Server 2025, slytech.us domain). No new VMs. Five scenarios, all scripted, all logged.
 
@@ -58,7 +58,7 @@ New-ADOrganizationalUnit -Name "Tier2" -Path "OU=Admin-Accounts,OU=SLYTECH,DC=sl
 New-ADOrganizationalUnit -Name "PAM" -Path "OU=Groups,OU=SLYTECH,DC=slytech,DC=us"
 ```
 
-![Full OU tree showing Admin-Accounts with Tier0, Tier1, Tier2 and PAM groups OU](/images/01-pam-ou-structure.png)
+![Full OU tree showing Admin-Accounts with Tier0, Tier1, Tier2 and PAM groups OU](/public/images/01-pam-ou-structure.png)
 
 ### PAM groups
 
@@ -84,9 +84,9 @@ Every admin account follows a strict naming pattern. The name tells you exactly 
 
 Six accounts total: two Tier 0, two Tier 1, two Tier 2. Tier 0 accounts go into Domain Admins. Tier 1 and Tier 2 stay out.
 
-![ADUC showing tiered admin accounts in their respective OUs](/images/02-pam-admin-accounts.png)
+![ADUC showing tiered admin accounts in their respective OUs](/public/images/02-pam-admin-accounts.png)
 
-![Terminal output showing clean PAM group memberships](/images/03-pam-group-members.png)
+![Terminal output showing clean PAM group memberships](/public/images/03-pam-group-members.png)
 
 Worth noting: when I ran the group membership verification, I found `secadmin` already sitting in Domain Admins. That account predates the PAM structure and doesn't follow the naming convention. It's exactly the kind of finding the audit script in Scenario 3 is designed to surface. I left it in place intentionally as a real finding for the audit report.
 
@@ -100,11 +100,11 @@ The naming convention means nothing without enforcement. Three GPOs lock down wh
 
 The logic might seem backwards at first. Why deny Tier 0 accounts from logging into Domain Controllers? Because Tier 0 accounts should never be used for interactive sessions at all. They exist for specific domain admin tasks only, not for browsing the web or reading email on a DC. The deny policy enforces that boundary technically instead of relying on policy compliance.
 
-![GPO-PAM-Tier0-Restrictions showing deny policies applied to PAM-Tier0-Admins](/images/04-pam-tier0-gpo.png)
+![GPO-PAM-Tier0-Restrictions showing deny policies applied to PAM-Tier0-Admins](/public/images/04-pam-tier0-gpo.png)
 
-![GPO-PAM-Tier1-Restrictions showing deny policies applied to PAM-Tier1-Admins](/images/05-pam-tier1-gpo.png)
+![GPO-PAM-Tier1-Restrictions showing deny policies applied to PAM-Tier1-Admins](/public/images/05-pam-tier1-gpo.png)
 
-![GPO-PAM-Tier2-Restrictions showing deny policies applied to PAM-Tier2-Admins](/images/06-pam-tier2-gpo.png)
+![GPO-PAM-Tier2-Restrictions showing deny policies applied to PAM-Tier2-Admins](/public/images/06-pam-tier2-gpo.png)
 
 ## Scenario 2: Just-in-time privilege elevation
 
@@ -116,9 +116,9 @@ The script takes four parameters: the account requesting elevation, the target g
 .\Invoke-JITAccess.ps1 -SamAccountName "mwebb.admin.t1" -TargetGroup "PAM-Tier0-Admins" -DurationMinutes 2 -TicketNumber "REQ-3001"
 ```
 
-![JIT elevation active, showing countdown to expiration](/images/07-jit-elevation-active.png)
+![JIT elevation active, showing countdown to expiration](/public/images/07-jit-elevation-active.png)
 
-![JIT elevation revoked, green confirmation message](/images/08-jit-elevation-revoked.png)
+![JIT elevation revoked, green confirmation message](/public/images/08-jit-elevation-revoked.png)
 
 The log tells the complete story:
 
@@ -134,7 +134,7 @@ The log tells the complete story:
 
 Granted at 20:46:53. Revoked at 20:48:53. Exactly two minutes. The ticket number ties it back to the original request. In production you'd set the duration to something like 480 minutes for an 8-hour work window, and you'd trigger this from a service desk workflow instead of running it manually.
 
-![Full JIT audit log output](/images/09-jit-log.png)
+![Full JIT audit log output](/public/images/09-jit-log.png)
 
 ## Scenario 3: Privileged account audit
 
@@ -144,9 +144,9 @@ The audit script runs against every privileged group in the domain and produces 
 .\Get-PrivilegedAccountAudit.ps1 -StaleDays 30 -ExportJson
 ```
 
-![Privileged account audit terminal output showing table and summary](/images/10-pam-audit-run.png)
+![Privileged account audit terminal output showing table and summary](/public/images/10-pam-audit-run.png)
 
-![Audit CSV opened in Excel showing all privileged account entries](/images/11-pam-audit-csv.png)
+![Audit CSV opened in Excel showing all privileged account entries](/public/images/11-pam-audit-csv.png)
 
 The audit found 19 privileged account entries across 8 groups. 13 flagged as stale or never logged on, which is expected for freshly created lab accounts. The finding that matters is `secadmin` in Domain Admins flagged as `YES - REVIEW`. That account doesn't follow the `.admin.t0` naming convention, which the script uses as a signal that something may be wrong. In a real environment that flag kicks off an investigation: who created this account, when was it added to Domain Admins, and does it still need to be there.
 
@@ -187,9 +187,9 @@ Add-ADGroupMember -Identity "Domain Admins" -Members "svc.legacy"
 
 `svc.legacy` is in Domain Admins. It has interactive logon enabled. The description says it was never cleaned up. This is not a contrived example. This is what happens in real environments when service accounts get created under pressure and nobody revisits them.
 
-![ADUC showing both service accounts in the Service-Accounts OU](/images/12-pam-service-accounts.png)
+![ADUC showing both service accounts in the Service-Accounts OU](/public/images/12-pam-service-accounts.png)
 
-![Terminal showing svc.backup with no privileged groups and svc.legacy in Domain Admins](/images/13-pam-service-account-comparison.png)
+![Terminal showing svc.backup with no privileged groups and svc.legacy in Domain Admins](/public/images/13-pam-service-account-comparison.png)
 
 The group membership comparison is the clearest way to see the problem. `svc.backup` has one group. `svc.legacy` has two, and one of them is Domain Admins. If an attacker gets the credentials for that service account, they own the domain.
 
@@ -203,7 +203,7 @@ Add-ADGroupMember -Identity "Domain Admins" -Members "mwebb"
 
 Windows logs this immediately as Event ID 4728, a member was added to a security-enabled global group. The Security event log on dc01:
 
-![Event ID 4728 showing mwebb added to Domain Admins](/images/14-pam-escalation-event.png)
+![Event ID 4728 showing mwebb added to Domain Admins](/public/images/14-pam-escalation-event.png)
 
 The event contains everything a SOC analyst needs: the timestamp, the account that performed the action (Administrator in this case, but in a real attack it would be the compromised account), the member that was added, and the group it was added to. Pulling this in Wazuh or Splunk gives you an alert the moment it happens.
 
