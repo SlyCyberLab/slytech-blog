@@ -297,9 +297,14 @@ const shareUrl = `https://blog.slytech.us/blog/${entry.slug}`;
   @media (max-width: 900px) {
     .post-wrap {
       grid-template-columns: 1fr;
+      padding-top: 2rem;
     }
     .toc-sidebar {
-      display: none;
+      position: static;
+      order: -1;
+    }
+    .toc-inner {
+      border-radius: 6px;
     }
     .post-nav {
       grid-template-columns: 1fr;
@@ -307,6 +312,16 @@ const shareUrl = `https://blog.slytech.us/blog/${entry.slug}`;
     .post-nav-card.next {
       grid-column: 1;
       text-align: left;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .post-wrap {
+      padding-top: 1.5rem;
+      padding-bottom: 3rem;
+    }
+    .post-title {
+      font-size: 1.5rem;
     }
   }
 </style>

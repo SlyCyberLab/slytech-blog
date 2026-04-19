@@ -165,7 +165,7 @@ const current = Astro.url.pathname;
   .nav-mobile-link:last-child { border-bottom: none; }
   .nav-mobile-link:hover { color: var(--color-accent); }
 
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
     .nav-links { display: none; }
     .nav-mobile-btn { display: flex; }
     .nav {
@@ -173,9 +173,6 @@ const current = Astro.url.pathname;
       min-height: var(--nav-height);
     }
     .nav-inner { padding: 0 1.5rem; height: var(--nav-height); }
-  }
-
-  @media (max-width: 640px) {
     .nav-mobile-menu.open { display: flex; }
   }
 </style>
