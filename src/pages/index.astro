@@ -1,7 +1,7 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
-import { readingTime, formatDate } from '@/utils/readingTime';
+import { readingTime, formatDate } from '../utils/readingTime';
 
 const posts = (await getCollection('blog')).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
