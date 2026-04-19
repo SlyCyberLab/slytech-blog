@@ -1,0 +1,183 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+
+const categories = [
+  {
+    slug: 'detection',
+    label: 'Detection',
+    desc: 'SIEM setups, detection rules, SOC workflows, and MITRE ATT&CK mapping.',
+  },
+  {
+    slug: 'compliance',
+    label: 'Compliance',
+    desc: 'ISO 27001, NIST CSF, OpenSCAP, and real evidence collection.',
+  },
+  {
+    slug: 'homelab',
+    label: 'Homelab',
+    desc: 'Proxmox, networking, VMs, and infrastructure builds.',
+  },
+  {
+    slug: 'cloud',
+    label: 'Cloud',
+    desc: 'Azure, cloud security, and cloud-native lab work.',
+  },
+  {
+    slug: 'iam',
+    label: 'IAM',
+    desc: 'Identity, access management, Active Directory, and PAM.',
+  },
+  {
+    slug: 'career',
+    label: 'Career',
+    desc: 'Certs, learning paths, and thoughts on breaking into cybersecurity.',
+  },
+] as const;
+
+const countByCategory = Object.fromEntries(
+  categories.map(c => [c.slug, posts.filter(p => p.data.category === c.slug).length])
+);
+---
+
+<BaseLayout
+  title="Categories"
+  description="Browse all post categories on SlyTech Blog."
+  matrixOpacity={0.03}
+>
+  <div class="container">
+    <header class="page-header">
+      <span class="mono page-label">CATEGORIES</span>
+      <h1 class="page-title">Browse by topic</h1>
+    </header>
+
+    <div class="cat-grid">
+      {categories.map(({ slug, label, desc }) => {
+        const count = countByCategory[slug] ?? 0;
+        return (
+          <a href={`/categories/${slug}`} class="cat-card" data-cat={slug}>
+            <div class="cat-card-top">
+              <span class="cat-card-name mono" data-cat={slug}>{label}</span>
+              <span class="cat-card-count mono">{count} {count === 1 ? 'post' : 'posts'}</span>
+            </div>
+            <p class="cat-card-desc">{desc}</p>
+            <span class="cat-card-arrow mono">→</span>
+          </a>
+        );
+      })}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .container {
+    padding-top: 3.5rem;
+    padding-bottom: 6rem;
+  }
+
+  .page-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--color-accent);
+  }
+
+  .page-title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    color: #fff;
+    margin-top: 0.5rem;
+    line-height: 1.2;
+  }
+
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .cat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.4rem 1.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  }
+
+  .cat-card:hover {
+    background: var(--color-surface-2);
+  }
+
+  /* Per-category hover border + glow */
+  .cat-card[data-cat="detection"]:hover { border-color: var(--cat-detection); box-shadow: 0 0 12px rgba(0,255,136,0.07); }
+  .cat-card[data-cat="compliance"]:hover { border-color: var(--cat-compliance); box-shadow: 0 0 12px rgba(251,146,60,0.07); }
+  .cat-card[data-cat="homelab"]:hover    { border-color: var(--cat-homelab);    box-shadow: 0 0 12px rgba(79,209,255,0.07); }
+  .cat-card[data-cat="cloud"]:hover      { border-color: var(--cat-cloud);      box-shadow: 0 0 12px rgba(167,139,250,0.07); }
+  .cat-card[data-cat="iam"]:hover        { border-color: var(--cat-iam);        box-shadow: 0 0 12px rgba(251,191,36,0.07); }
+  .cat-card[data-cat="career"]:hover     { border-color: var(--cat-career);     box-shadow: 0 0 12px rgba(244,114,182,0.07); }
+
+  .cat-card-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .cat-card-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  /* Category name colors */
+  .cat-card-name[data-cat="detection"] { color: var(--cat-detection); }
+  .cat-card-name[data-cat="compliance"] { color: var(--cat-compliance); }
+  .cat-card-name[data-cat="homelab"]    { color: var(--cat-homelab); }
+  .cat-card-name[data-cat="cloud"]      { color: var(--cat-cloud); }
+  .cat-card-name[data-cat="iam"]        { color: var(--cat-iam); }
+  .cat-card-name[data-cat="career"]     { color: var(--cat-career); }
+
+  .cat-card-count {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  .cat-card-desc {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .cat-card-arrow {
+    font-size: 0.8rem;
+    color: var(--color-text-subtle);
+    transition: color 0.15s, transform 0.15s;
+    align-self: flex-end;
+  }
+
+  .cat-card:hover .cat-card-arrow {
+    color: var(--color-text-muted);
+    transform: translateX(3px);
+  }
+
+  @media (max-width: 768px) {
+    .cat-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 480px) {
+    .cat-grid { grid-template-columns: 1fr; }
+  }
+</style>
