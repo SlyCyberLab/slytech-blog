@@ -29,7 +29,7 @@ The first search I ran was a simple inventory:
 index=main | stats count by host sourcetype | sort -count
 ```
 
-![Data inventory showing all hosts and sourcetypes with event counts](/public/images/splunk-p2-01-data-inventory.png)
+![Data inventory showing all hosts and sourcetypes with event counts](/images/splunk-p2-01-data-inventory.png)
 
 227,485 events across 7 days. Three hosts sending data, dc01 dominating with the bulk of it. This one search told me where my data was coming from and how much of it existed before I wrote anything else.
 
@@ -39,7 +39,7 @@ Next I wanted to know which Windows Security EventCodes were actually present:
 index=main sourcetype=WinEventLog:Security | stats count by EventCode | sort -count | head 15
 ```
 
-![EventCode breakdown showing 4624, 4634, and 4672 dominating the Security log](/public/images/splunk-p2-02-eventcode-inventory.png)
+![EventCode breakdown showing 4624, 4634, and 4672 dominating the Security log](/images/splunk-p2-02-eventcode-inventory.png)
 
 The top three were 4624 (successful logon), 4634 (logoff), and 4672 (special privileges assigned). Those three account for the vast majority of the Security log. That's normal for a domain controller. The interesting ones are buried further down, and 4625 (failed logon) was sitting at 159 events. That's what I wanted to build a detection around.
 
@@ -65,7 +65,7 @@ Let me break down what each piece does, because this pattern shows up in SOC wor
 
 `where count >= 3` is the threshold. Three failures in five minutes is suspicious. One failure might be a typo. Three is a pattern. SOC teams tune this number per environment, but 3 is a reasonable starting point for a lab.
 
-![Brute force detection results showing multiple failed logons grouped by time window and source](/public/images/splunk-p2-03-brute-force-detection-spl.png)
+![Brute force detection results showing multiple failed logons grouped by time window and source](/images/splunk-p2-03-brute-force-detection-spl.png)
 
 The results showed exactly what I expected. My test accounts hitting win11-002 multiple times, the administrator account being targeted from 10.0.0.211, and the loopback address attempts from the NTLM testing I ran in Part 1. Real data, real detections.
 
@@ -80,11 +80,11 @@ From the search results I clicked **Save As → Alert** and configured it:
 - **Trigger condition:** Number of results is greater than 0
 - **Action:** Add to Triggered Alerts
 
-![Alert configuration showing cron schedule and trigger conditions](/public/images/splunk-p2-04-alert-config.png)
+![Alert configuration showing cron schedule and trigger conditions](/images/splunk-p2-04-alert-config.png)
 
 The cron expression `*/5 * * * *` means run every 5 minutes, every hour, every day. It matches the 5-minute window in the SPL search, so the alert checks the exact same timeframe it's searching over.
 
-![Saved alert showing enabled status and scheduled cron execution](/public/images/splunk-p2-05-alert-saved.png)
+![Saved alert showing enabled status and scheduled cron execution](/images/splunk-p2-05-alert-saved.png)
 
 The alert is now live. Every 5 minutes Splunk runs that search. If any source generates 3 or more failed logons in a 5-minute window it fires and logs to Triggered Alerts. That's a detection running in the background without me touching anything.
 
@@ -116,9 +116,9 @@ index=main sourcetype=WinEventLog:Security EventCode=4625 | bin _time span=5m | 
 ```
 Answers: is there an active brute force happening right now.
 
-![Dashboard top half showing failed logons by host and failed logons over time](/public/images/splunk-p2-06-dashboard-top.png)
+![Dashboard top half showing failed logons by host and failed logons over time](/images/splunk-p2-06-dashboard-top.png)
 
-![Dashboard bottom half showing top accounts failing and active brute force detection table](/public/images/splunk-p2-07-dashboard-bottom.png)
+![Dashboard bottom half showing top accounts failing and active brute force detection table](/images/splunk-p2-07-dashboard-bottom.png)
 
 Four panels, four questions answered without running a single manual search. That's the point of a dashboard.
 
