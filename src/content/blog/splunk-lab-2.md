@@ -69,7 +69,7 @@ Let me break down what each piece does, because this pattern shows up in SOC wor
 
 The results showed exactly what I expected. My test accounts hitting win11-002 multiple times, the administrator account being targeted from 10.0.0.211, and the loopback address attempts from the NTLM testing I ran in Part 1. Real data, real detections.
 
-## Turning the Search Into an Alert
+## Turning the Search Into an Alert 
 
 Running a search manually is fine for investigation. For detection you need something that runs automatically and tells you when it fires.
 
