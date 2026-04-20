@@ -49,7 +49,7 @@ Tailscale is installed on my Proxmox host and configured as a subnet router, so 
 
 The split DNS piece tells Tailscale that any query for `citadel.slytech.us` should go to my Technitium DNS server instead of going out to the public internet.
 
-![Tailscale Split DNS](/public/images/citadel-tailscale-01-split-dns.png)
+![Tailscale Split DNS](/images/citadel-tailscale-01-split-dns.png)
 
 In the Tailscale admin console under DNS, you add a nameserver with a restriction to your domain. That's it. Any device on my tailnet now resolves `*.citadel.slytech.us` through Technitium.
 
@@ -78,25 +78,25 @@ services:
 
 Port 53 is the actual DNS port, that's what Tailscale and your devices will send queries to. Port 5380 is the web UI where you manage everything. Once it's running you can reach the dashboard at `http://your-server-ip:5380`.
 
-![Technitium Dashboard](/public/images/citadel-tailscale-02-technitium-dashboard.png)
+![Technitium Dashboard](/images/citadel-tailscale-02-technitium-dashboard.png)
 
 The zones page shows everything I have configured. For Citadel specifically I have `citadel.slytech.us` as a primary zone.
 
-![Technitium Zones](/public/images/citadel-tailscale-03-technitium-zones.png)
+![Technitium Zones](/images/citadel-tailscale-03-technitium-zones.png)
 
 Inside that zone there's one wildcard A record pointing `*` to the NPMplus IP. Any subdomain under `citadel.slytech.us` that doesn't have a more specific record resolves to NPMplus, which then handles routing it to the right service.
 
-![Technitium Wildcard Record](/public/images/citadel-tailscale-04-technitium-wildcard.png)
+![Technitium Wildcard Record](/images/citadel-tailscale-04-technitium-wildcard.png)
 
 ## NPMplus and Proxy Hosts
 
 NPMplus is running as a Docker container on Citadel. Once Technitium routes traffic to it, NPMplus decides where it actually goes based on the domain name in the request.
 
-![NPMplus Proxy Hosts](/public/images/citadel-tailscale-05-npmplus-dashboard.png)
+![NPMplus Proxy Hosts](/images/citadel-tailscale-05-npmplus-dashboard.png)
 
 For each service you create a proxy host. You give it the domain name, the backend IP and port, and tell it which SSL certificate to use.
 
-![NPMplus Proxy Host Config](/public/images/citadel-tailscale-06-npmplus-proxy-host.png)
+![NPMplus Proxy Host Config](/images/citadel-tailscale-06-npmplus-proxy-host.png)
 
 The proxy host for Proxmox for example listens on `prox.citadel.slytech.us`, forwards to `10.0.0.x:8006` over HTTPS, and uses the wildcard certificate. That's the entire configuration for one service.
 
@@ -106,19 +106,19 @@ This is the part that makes everything feel legitimate. Instead of a self-signed
 
 Getting a wildcard certificate requires a DNS challenge, which means you need to be able to create TXT records in your DNS provider. Since my domain is on Cloudflare I created a restricted API token with Zone DNS Edit permission scoped to just `slytech.us`.
 
-![Cloudflare API Token](/public/images/citadel-tailscale-09-cloudflare-api-token.png)
+![Cloudflare API Token](/images/citadel-tailscale-09-cloudflare-api-token.png)
 
 In NPMplus under Certificates you add the API token and request the wildcard certificate. NPMplus handles the Let's Encrypt challenge automatically and renews it before it expires.
 
-![NPMplus SSL Certificates](/public/images/citadel-tailscale-07-npmplus-ssl-certs.png)
+![NPMplus SSL Certificates](/images/citadel-tailscale-07-npmplus-ssl-certs.png)
 
-![NPMplus Certificate Detail](/public/images/citadel-tailscale-08-npmplus-cert-detail.png)
+![NPMplus Certificate Detail](/images/citadel-tailscale-08-npmplus-cert-detail.png)
 
 ## The End Result
 
 After all that, this is what accessing Proxmox looks like now.
 
-![Browser with Valid SSL](/public/images/citadel-tailscale-10-browser-valid-ssl.png)
+![Browser with Valid SSL](/images/citadel-tailscale-10-browser-valid-ssl.png)
 
 `prox.citadel.slytech.us` in the address bar, green lock, no warnings, no port number. Works from my Mac, my phone, anywhere I have Tailscale running.
 
