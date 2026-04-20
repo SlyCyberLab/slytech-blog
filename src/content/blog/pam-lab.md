@@ -18,7 +18,7 @@ Most identity programs treat all admin accounts the same. One Domain Admins grou
 Privileged Access Management exists to stop exactly that. This lab builds a full PAM implementation on top of the IAM lab I published last week, same Citadel infrastructure, same domain, extended with tiered admin accounts, JIT elevation, a privileged account audit script, service account security examples, and a live privilege escalation simulation with event log evidence.
 
 
-![PAM lab architecture](/public/images/00-pam-lab-architecture.png)
+![PAM lab architecture](/images/00-pam-lab-architecture.png)
 
 Everything is built on dc01 (Windows Server 2025, slytech.us domain). No new VMs. Five scenarios, all scripted, all logged.
 
