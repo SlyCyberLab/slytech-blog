@@ -26,17 +26,17 @@ The whole process starts in the Proxmox web UI. Hit Create VM, assign it an ID, 
 
 One thing worth knowing upfront, and I'll come back to this when we get to Wazuh, is that disk size matters more than you think depending on what you're planning to install. Start with more than you think you need.
 
-![VM Summary](/public/images/01-vm-summary.png)
+![VM Summary](/images/01-vm-summary.png)
 
 ## Installing Ubuntu
 
 Once the VM boots from the ISO you get dropped into the Ubuntu installer. Nothing complicated here, select your language, keyboard layout, leave the network on DHCP and let it auto configure. The storage screen looks intimidating but the defaults are fine, it sets up LVM automatically which is exactly what you want for a server.
 
-![Ubuntu Installer](/public/images/02-ubuntu-installer-language.png)
+![Ubuntu Installer](/images/02-ubuntu-installer-language.png)
 
 The profile setup is where you give your server an identity. I set the hostname to `ubuntu`, username to `slytech`, and made sure to enable OpenSSH during installation. That last part is important, without it you're stuck using the Proxmox console every time instead of just SSHing in from wherever you are.
 
-![Profile Setup](/public/images/03-ubuntu-profile-setup.png)
+![Profile Setup](/images/03-ubuntu-profile-setup.png)
 
 After that it runs through the installation, reboots, and you're in.
 
@@ -44,7 +44,7 @@ After that it runs through the installation, reboots, and you're in.
 
 I SSHed in from DarkShell, my Windows VM on the same network, right after the install finished. First thing you see is the system summary, memory usage, disk usage, IP address. Clean and straightforward.
 
-![First Login](/public/images/04-ubuntu-first-login.png)
+![First Login](/images/04-ubuntu-first-login.png)
 
 First thing I always do on a fresh Ubuntu install is run updates. There were 65 packages waiting immediately after install, which is pretty normal for a fresh ISO.
 
@@ -52,7 +52,7 @@ First thing I always do on a fresh Ubuntu install is run updates. There were 65 
 sudo apt update && sudo apt upgrade -y
 ```
 
-![Updates Complete](/public/images/05-ubuntu-updates-complete.png)
+![Updates Complete](/images/05-ubuntu-updates-complete.png)
 
 At this point you have a clean, updated Ubuntu Server VM ready for whatever you want to throw at it. In my case that was Wazuh, which I cover in the next post.
 
