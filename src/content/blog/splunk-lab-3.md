@@ -15,7 +15,7 @@ tags:
 
 [Part 1](https://blog.slytech.us/blog/splunk-lab-1/) and [Part 2](https://blog.slytech.us/blog/splunk-lab-2/) got data flowing and detections running. By the end of Part 2 I had a brute force alert firing every 5 minutes and a dashboard showing failed logon activity across the lab. But running detections and having a SOC workflow are two different things. Part 3 closes the loop.
 
-This is the part where the lab starts looking less like a project and more like something a real detection engineer would build.
+This is the part where the lab starts looking less like a project and more like something a real detection engineer would build. 
 
 
 
