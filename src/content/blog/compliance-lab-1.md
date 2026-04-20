@@ -86,7 +86,7 @@ Worth doing the `dd` wipe before reinstalling on a used disk. Without it you ris
 
 ## Installing Wazuh
 
-I've covered the full [Ubuntu 22.04 setup](https://blog.slytech.us/homelab/proxmox/linux/2026/03/05/spinning-up-ubuntu-server-vm-on-proxmox.html) and [Wazuh installation](https://blog.slytech.us/homelab/security/siem/2026/03/05/setting-up-wazuh-siem-in-my-homelab.html) in previous posts if you want the step-by-step detail. For this lab, the short version: Ubuntu installed clean with a static IP at `10.10.10.20`, SSH enabled, updates applied.
+I've covered the full [Ubuntu 22.04 setup](https://blog.slytech.us/blog/ubuntu-proxmox/) and [Wazuh installation](https://blog.slytech.us/blog/wazuh-siem-setup/) in previous posts if you want the step-by-step detail. For this lab, the short version: Ubuntu installed clean with a static IP at `10.10.10.20`, SSH enabled, updates applied.
 
 For the Wazuh install, the `-a` flag handles everything in one shot. No manual config editing, no running components separately. It installs the indexer, manager, and dashboard together on a single node.
 
