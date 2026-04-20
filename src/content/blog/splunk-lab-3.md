@@ -1,6 +1,6 @@
 ---
 title: "Building a Splunk SIEM Lab on Proxmox, Part 3: MITRE ATT&CK Mapping and Building a Complete SOC Workflow"
-date: 2026-03-24
+date: 2026-03-25
 description: "Integrating MITRE ATT&CK mapping with Splunk Security Essentials and building a complete SOC detection workflow."
 category: detection
 tags:
@@ -25,7 +25,7 @@ Splunk Security Essentials (SSE) is a free app from Splunk that maps your detect
 
 Go to **Apps → Browse More Apps**, search for "Splunk Security Essentials" and hit Install.
 
-![Splunk Security Essentials home page loaded successfully](/public/images/splunk-p3-01-sse-home.png)
+![Splunk Security Essentials home page loaded successfully](/images/splunk-p3-01-sse-home.png)
 
 The install went smoothly but the app wouldn't load properly after. Every dashboard panel threw a JavaScript error. This is a known issue and I want to document the fix because it'll waste your afternoon if you hit it and don't know where to look.
 
@@ -63,11 +63,11 @@ This is a detail that trips up anyone running Splunk 10.x on Proxmox with defaul
 
 With SSE working, the first thing I wanted to do was find the detection content that matched what we built in Part 2. Searching for T1110 in the Security Content library returned seven detections in the Brute Force category.
 
-![T1110 search results in Security Essentials showing seven brute force detections](/public/images/splunk-p3-02-sse-t1110-content.png)
+![T1110 search results in Security Essentials showing seven brute force detections](/images/splunk-p3-02-sse-t1110-content.png)
 
 The Basic Brute Force Detection is the closest match to the SPL we wrote in Part 2. Opening it shows the full ATT&CK context that makes this more than just a Splunk search.
 
-![Basic Brute Force Detection detail showing ATT&CK tactic, technique, and threat groups](/public/images/splunk-p3-03-sse-basic-brute-force.png)
+![Basic Brute Force Detection detail showing ATT&CK tactic, technique, and threat groups](/images/splunk-p3-03-sse-basic-brute-force.png)
 
 The right panel maps the detection to:
 
@@ -81,7 +81,7 @@ The same technique we detected with EventCode 4625 is used by APT38, APT41, and 
 
 Clicking Live Data on the Basic Brute Force Detection showed something interesting.
 
-![Live Data showing 0 events and a red warning about the src field](/public/images/splunk-p3-04-sse-live-detection.png)
+![Live Data showing 0 events and a red warning about the src field](/images/splunk-p3-04-sse-live-detection.png)
 
 Zero events, and a red warning: "Must have the src field defined." SSE uses Splunk's Common Information Model (CIM) which normalizes field names across data sources. The CIM Authentication data model uses `src` as the source IP field. Our raw Windows Event Logs use `Source_Network_Address` instead.
 
@@ -89,7 +89,7 @@ The fix is installing the Splunk Add-on for Microsoft Windows (the Windows TA). 
 
 After installing the TA from Splunkbase and restarting Splunk:
 
-![Live Data showing 31,231 events with both prerequisites passing green](/public/images/splunk-p3-05-sse-live-detection-fixed.png)
+![Live Data showing 31,231 events with both prerequisites passing green](/images/splunk-p3-05-sse-live-detection-fixed.png)
 
 Both checkmarks green. 31,231 events now being analyzed by the SSE detection. The before and after here is the point: raw Windows logs work for custom SPL searches, but if you want to use SSE or any CIM-based detection content, the TA is not optional. Install it from the start.
 
@@ -101,7 +101,7 @@ With the detection pipeline working, I wanted real attack data to validate it. I
 hydra -l slytech -P /tmp/passwords.txt -t 4 -V -I ssh://10.0.0.228
 ```
 
-![Hydra running SSH brute force against 10.0.0.228 with 10 password attempts](/public/images/splunk-p3-06-hydra-attack.png)
+![Hydra running SSH brute force against 10.0.0.228 with 10 password attempts](/images/splunk-p3-06-hydra-attack.png)
 
 Ten attempts, ten failures. The attack completed in under 10 seconds. On the Windows side I also ran manual failed logon attempts against win11-002 to generate 4625 events for the Windows detection.
 
@@ -112,7 +112,7 @@ index=main host=win11-002 EventCode=4625 earliest=-1h
 | stats count by Account_Name Source_Network_Address
 ```
 
-![Splunk showing 20 failed logon events from win11-002 including fakeuser accounts and admin](/public/images/splunk-p3-07-splunk-catches-attack.png)
+![Splunk showing 20 failed logon events from win11-002 including fakeuser accounts and admin](/images/splunk-p3-07-splunk-catches-attack.png)
 
 20 events. The `fakeuser1` through `fakeuser10` accounts from the loopback test, plus `admin` and `administrator` attempts from the network. Source addresses, account names, and counts all parsed automatically by the Windows TA.
 
@@ -123,7 +123,7 @@ SSE content is read-only but you can clone any detection into Custom Content and
 
 Clicking **Clone This Content Into Custom Content** opens a form where you define the detection's metadata and map it to your local saved search.
 
-![Clone dialog showing Citadel - Brute Force Detection being created with Bookmarked status](/public/images/splunk-p3-09-clone-detection.png)
+![Clone dialog showing Citadel - Brute Force Detection being created with Bookmarked status](/images/splunk-p3-09-clone-detection.png)
 
 I named it `Citadel - Brute Force Detection`, set it to Solved In Splunk, and bookmarked it. This creates a custom detection entry in SSE that tracks implementation status and maps back to the ATT&CK technique. Every environment should have a detection registry like this, even in a homelab.
 
