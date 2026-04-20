@@ -55,7 +55,7 @@ The `--accept-license` flag skips the interactive prompt and `--run-as-root` is 
 
 When the install finishes it prints your admin credentials directly in the terminal. Screenshot that immediately, it only appears once. Then Splunk starts and gives you the web interface URL.
 
-![Splunk first start showing web interface URL](/public/images/splunk-02-first-start.png)
+![Splunk first start showing web interface URL](/images/splunk-02-first-start.png)
 
 Enable boot-start so it comes back up after a reboot:
 
@@ -67,7 +67,7 @@ sudo /opt/splunk/bin/splunk enable boot-start --run-as-root
 
 Head to `http://your-splunk-ip:8000` and log in. The dashboard loads right away and already shows activity from the Splunk server monitoring itself. Even before connecting any endpoints, you can already see events coming in.
 
-![Splunk dashboard on first login](/public/images/splunk-03-dashboard-first-login.png)
+![Splunk dashboard on first login](/images/splunk-03-dashboard-first-login.png)
 
 ## Setting Up the Receiving Port
 
@@ -75,7 +75,7 @@ Before any forwarder can send data, Splunk needs to be listening for it. Think o
 
 Go to **Settings → Forwarding and receiving → Configure receiving → New Receiving Port** and add port `9997`. That's the standard port Splunk Universal Forwarders use by default.
 
-![Receiving port 9997 configured and enabled](/public/images/splunk-05-receiving-port.png)
+![Receiving port 9997 configured and enabled](/images/splunk-05-receiving-port.png)
 
 ## Installing Universal Forwarders on Windows
 
@@ -127,7 +127,7 @@ With both forwarders running, a quick search confirms what's coming in:
 index=main | stats count by host
 ```
 
-![Both hosts sending data, WIN11 with 553 events and dc01 with 2816](/public/images/splunk-08-both-hosts-stats.png)
+![Both hosts sending data, WIN11 with 553 events and dc01 with 2816](/images/splunk-08-both-hosts-stats.png)
 
 WIN11 has 553 events and dc01 has 2,816. Both are online and shipping logs.
 
@@ -139,7 +139,7 @@ To test detection I made deliberate failed RDP login attempts against win11-002 
 index=main sourcetype=WinEventLog:Security EventCode=4625
 ```
 
-![16 EventCode 4625 failed logon events in Splunk from win11-002](/public/images/splunk-09-brute-force-detected.png)
+![16 EventCode 4625 failed logon events in Splunk from win11-002](/images/splunk-09-brute-force-detected.png)
 
 16 events. EventCode 4625, ComputerName win11-002. The interesting fields panel on the left already parsed out `Failure_Reason`, `Workstation_Name`, `Account_Name`, and `Source_Network_Address` automatically. That's Splunk doing what it's built to do.
 
