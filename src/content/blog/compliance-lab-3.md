@@ -15,7 +15,7 @@ tags:
 
 NIST CSF 2.0 shows up on more job descriptions than almost any other framework right now. Not because companies are all formally certified against it, but because it gives security teams a common language for talking about risk. If you can map real work to its six functions, you're speaking that language.
 
-[Part 1](https://blog.slytech.us/compliance-lab-1/) and [Part 2](https://blog.slytech.us/compliance-lab-2/) of this series built the lab and demonstrated ISO 27001 Annex A controls. Part 3 takes the same environment and maps it to NIST CSF 2.0, covering all six functions: GOVERN, IDENTIFY, PROTECT, DETECT, RESPOND, and RECOVER. The difference from Part 2 is that this time the evidence includes live attack simulation with automated response, a remediated compliance scan, and snapshot-based recovery.
+[Part 1](https://blog.slytech.us/blog/compliance-lab-1/) and [Part 2](https://blog.slytech.us/blog/compliance-lab-2/) of this series built the lab and demonstrated ISO 27001 Annex A controls. Part 3 takes the same environment and maps it to NIST CSF 2.0, covering all six functions: GOVERN, IDENTIFY, PROTECT, DETECT, RESPOND, and RECOVER. The difference from Part 2 is that this time the evidence includes live attack simulation with automated response, a remediated compliance scan, and snapshot-based recovery.
 
 
 
