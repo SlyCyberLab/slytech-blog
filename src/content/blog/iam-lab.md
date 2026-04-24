@@ -84,7 +84,7 @@ New-ADGroup -Name "FileShare-IT-RW" -GroupScope Global -GroupCategory Security -
 New-ADGroup -Name "FileShare-IT-Read" -GroupScope Global -GroupCategory Security -Path "OU=ResourceGroups,OU=Groups,OU=SLYTECH,DC=slytech,DC=us"
 ```
 
-## Scenario 1: Provisioning workflow
+## Scenario 1: Joiner workflow (provisioning)
 
 The provisioning script takes a request (name, department, title, manager, ticket number) and handles everything: username generation, OU placement, role group assignment, resource group assignment, temp password with forced change at first logon, and a timestamped audit log entry for every action.
 
@@ -122,7 +122,7 @@ Set-MgUserLicense -UserId "mwebb@slytech.us" `
 
 License SKU is determined by department and role. Standard users get Business Premium, elevated roles get E3 or E5. This step runs after AD provisioning, before the user's first day. Lab scope covers on-prem AD only, but skipping this step in a real environment means your new hire shows up on day one with no email.
 
-## Scenario 2: Deprovisioning workflow
+## Scenario 2: Leaver workflow (deprovisioning)
 
 Offboarding is where IAM programs fall apart in practice. Someone gives notice, IT gets a ticket three days later, and by the time the account is disabled the person has already left with two weeks of access they shouldn't have had.
 
