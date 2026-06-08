@@ -151,33 +151,3 @@ In an enterprise context this is the moment where a help desk technician can use
 ## What's Next
 
 With hybrid identity in place, the next step is device management. WS01 and WS02 are domain-joined but not cloud-managed. Project 2 enrolls them into Microsoft Intune, applies compliance policies, and integrates Defender for Endpoint, turning the existing Windows 11 workstations into managed cloud endpoints.
-
----
-
-*All scripts and configurations referenced in this series are published at [github.com/SlyCyberLab](https://github.com/SlyCyberLab).*
-
----
-
-## LinkedIn Companion Post
-
-Clock skew took down my Entra Connect installation and the error message pointed me in completely the wrong direction.
-
-I've been extending my on-prem Active Directory lab into Microsoft Entra ID for the hybrid identity portion of my cloud series. Entra Connect installed fine but kept throwing an "expired certificate" error at the configure step. Spent time rotating keys, checking app registrations, re-downloading the latest installer. None of it mattered.
-
-The actual problem was DC01's Windows Time service syncing against its own local CMOS clock instead of an external NTP source. OAuth token validation fails when there's clock drift, but the error message says "certificate expired." That misdirection cost me an hour.
-
-One `w32tm /query /status` command would have shown it immediately.
-
-What the lab now has running end to end:
-- slytech.us AD domain verified in Microsoft Entra ID
-- 18 users synced including tiered admin accounts and service accounts from the PAM lab
-- Password Hash Sync confirmed working with a live sign-in test
-- Full hybrid identity foundation ready for Intune and Defender enrollment
-
-Full writeup with the exact commands and troubleshooting steps on the blog.
-
-[link]
-
-Have you hit misleading error messages during Entra Connect setup? The time sync one is surprisingly common and almost never mentioned in the official docs.
-
-#hybrididentity #microsoftentra #activedirectory #azure #homelab #cybersecurity #entraidconnect
