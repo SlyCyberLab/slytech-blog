@@ -178,8 +178,6 @@ The Defender portal showed WIN11 as a fully onboarded endpoint within 30 minutes
 
 The same GPO that enrolled WIN11 would enroll every domain-joined machine in the Workstations OU automatically. Scale it to 500 machines and the process doesn't change. That's the point of building it this way.
 
-The two blockers that cost the most time, the missing SCP object and the IPv6 DNS override, both had misleading symptoms. The SCP failure looked like a permissions issue. The DNS failure looked like a firewall issue. Neither was. Running `dsregcmd /status` and `ipconfig /all` early would have cut the troubleshooting time significantly.
-
 ## What's Next
 
 With endpoints managed and security telemetry flowing into Defender, the next step is governance. Project 3 covers Azure Policy, Terraform, and Log Analytics Workbooks, building compliance monitoring and infrastructure-as-code on top of everything running in the slytech.us environment.
