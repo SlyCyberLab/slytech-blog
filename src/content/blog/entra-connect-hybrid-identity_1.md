@@ -12,11 +12,7 @@ This is the foundation everything else in the cloud series builds on. Intune enr
 
 ## Why Entra Connect over Cloud Sync
 
-Microsoft currently offers two sync options: Entra Connect Sync, an on-premises agent that runs on the DC, and Entra Cloud Sync, a lightweight agent that's cloud-managed. Cloud Sync is where Microsoft is pushing new deployments. For this lab, Connect Sync made more sense.
-
-The slytech.us domain has a real OU structure, PAM tier groups, service accounts, and tiered admin naming conventions built across the [IAM](https://blog.slytech.us/blog/iam-lab) and [PAM](https://blog.slytech.us/blog/pam-lab) labs. Connect Sync gave full control over attribute filtering, OU scoping, and sync rules. Cloud Sync abstracts a lot of that away, which isn't what I wanted for a lab built specifically to demonstrate identity management depth.
-
-The distinction matters in practice. Connect Sync for a single forest with a complex OU structure and full attribute control needed. Cloud Sync when the goal is multi-forest consolidation or minimizing on-prem footprint.
+Microsoft offers two sync options: Entra Connect Sync, an on-premises agent on the DC, and Entra Cloud Sync, a lightweight cloud-managed agent. Cloud Sync is where Microsoft is pushing new deployments. Connect Sync made more sense here given the real OU structure, PAM tier groups, and service accounts already built across the [IAM](https://blog.slytech.us/blog/iam-lab) and [PAM](https://blog.slytech.us/blog/pam-lab) labs. Full attribute control and OU scoping mattered more than a lighter footprint.
 
 ## The Environment Going In
 
@@ -32,19 +28,17 @@ Nothing got torn down. Entra Connect syncs what's already there without touching
 
 ## Standing Up the M365 Tenant
 
-The free Microsoft 365 Developer Program sandbox was the first thing I tried. It gives 25 E5 licenses, Entra ID P2, Intune, Defender, everything this series needs. Microsoft tightened eligibility in 2024 though and now requires an active Visual Studio subscription or verified developer activity. The portal returned "you don't qualify" so I moved on without trying to work around it.
+The free Microsoft 365 Developer Program sandbox requires an active Visual Studio subscription since Microsoft tightened eligibility in 2024. The portal returned "you don't qualify" so the Microsoft 365 Business Premium 30-day trial was the practical alternative. One user, no charge until day 30, Entra ID, Intune, and Defender for Endpoint included.
 
-The practical alternative was the Microsoft 365 Business Premium 30-day trial. One user, no charge until day 30, includes Entra ID, Intune, and Defender for Endpoint. That covers everything in this series.
-
-During tenant creation I picked `slytechlab.onmicrosoft.com` as the domain prefix. `slytech.onmicrosoft.com` was already taken from an earlier failed attempt. The onmicrosoft.com domain is just the backend tenant identifier and never appears in user UPNs once the custom domain is verified.
+The tenant landed on `slytechlab.onmicrosoft.com` since `slytech.onmicrosoft.com` was already taken from an earlier attempt. The onmicrosoft.com domain is just the backend tenant identifier and never appears in user UPNs once the custom domain is verified.
 
 ![Microsoft 365 admin center showing the new SlyTech tenant](/images/01-m365-admin-center.png)
 
 ## Verifying the Custom Domain
 
-Before Entra Connect could sync, slytech.us needed to be a verified domain in the tenant. The process is standard: add the domain, get a TXT record, add it to public DNS, click verify.
+Before Entra Connect could sync, slytech.us needed to be a verified domain in the tenant. Standard process: add the domain, get a TXT record, add it to public DNS, click verify.
 
-One thing worth noting: slytech.us is both an internal AD domain and a public domain registered in Cloudflare. Entra ID verifies against public DNS, not the internal Technitium resolver. The TXT record goes in Cloudflare, not Technitium. It's easy to add it to the wrong DNS server and sit there wondering why verification keeps failing.
+Worth noting: slytech.us is both an internal AD domain and a public domain in Cloudflare. Entra ID verifies against public DNS, not the internal Technitium resolver. The TXT record goes in Cloudflare, not Technitium.
 
 ```
 Type: TXT
@@ -59,23 +53,19 @@ Cloudflare propagates fast. Verification came back successful within two minutes
 
 ![slytech.us verified and set as primary domain in Entra ID](/images/03-entra-domain-primary.png)
 
-After verification I set slytech.us as the primary domain. That's what ensures synced users get `@slytech.us` UPNs instead of `@slytechlab.onmicrosoft.com`. The onmicrosoft.com domain stays in the background as the fallback.
-
 ## Installing Entra Connect on DC01
 
-Entra Connect installs directly on DC01. I grabbed it from the Entra admin center under the Connect Sync option. The download page has moved around a few times so going through the portal was more reliable than hunting for a static URL.
+Grabbed Entra Connect from the Entra admin center under Connect Sync. The version matters: anything below 2.4.18.0 fails because Microsoft deprecated MSOnline in April 2025. The portal served 2.6.3.0 so that wasn't an issue.
 
-The version matters here. Anything below 2.4.18.0 will fail because Microsoft deprecated MSOnline in April 2025. The installer on the portal was current at 2.6.3.0 so that wasn't an issue.
-
-Express Settings went in for a single forest lab. It configured Password Hash Sync, automatic sync every 30 minutes, and set up the AD connector automatically.
+Express Settings went in for a single forest lab. Password Hash Sync, 30-minute sync cycle, AD connector configured automatically.
 
 ![Entra Connect installer on the Express Settings screen](/images/05-entra-connect-installer.png)
 
-![Ready to configure screen showing sync configuration summary](/images/06-entra-connect-ready.png)
+![Ready to configure screen showing sync configuration summary](/images/06-entra-connect-ready-to-configure.png)
 
 ## The Gotcha That Stopped the Install
 
-The installer ran, got to the Configure screen, and threw this:
+Got to the Configure screen and hit this:
 
 ```
 AADSTS700027: The certificate used to sign the client assertion is expired.
@@ -84,7 +74,7 @@ An error occurred while initializing the slytechlab.onmicrosoft.com - AAD connec
 
 Spent time rotating keys, checking app registrations, re-downloading the latest installer. None of it mattered. The error message says expired certificate. The actual problem was time sync.
 
-DC01 was running its Windows Time service against the local CMOS clock instead of an external NTP source. Running `w32tm /query /status` showed it immediately:
+DC01 was syncing its clock against the local CMOS instead of an external NTP source:
 
 ```
 Source: Local CMOS Clock
@@ -98,7 +88,6 @@ Set-Service -Name W32Time -StartupType Automatic
 Start-Service -Name W32Time
 w32tm /config /manualpeerlist:"time.windows.com" /syncfromflags:manual /reliable:YES /update
 w32tm /resync /force
-w32tm /query /status
 ```
 
 After the fix, the status showed:
@@ -112,30 +101,26 @@ Re-ran the installer. It went through clean.
 
 ![Entra Connect configuration complete](/images/07-entra-connect-configured.png)
 
-The time sync issue is worth calling out because the error message is genuinely misleading. "Certificate expired" points you toward keys, app registrations, and installer versions. None of that matters. Running `w32tm /query /status` shows the real problem immediately, but it's not where you look first when an installer fails.
+The error message is genuinely misleading. "Certificate expired" sends you toward keys and app registrations. `w32tm /query /status` shows the real problem immediately.
 
-One more thing from the setup: at the Entra credentials step, the right account was `admin@slytechlab.onmicrosoft.com`, not `admin@slytech.us`. Even though slytech.us is the primary domain, the tenant admin account was created under slytechlab.onmicrosoft.com and that is what Entra Connect authenticates against during setup.
 
 ## Seeing the Sync Work
 
-The first sync ran automatically after installation. In Entra ID Users, filtering by `On-premises sync enabled == Yes` showed all 18 users from the slytech.us domain:
+First sync ran automatically after installation. Filtering Entra ID Users by `On-premises sync enabled == Yes` showed all 18 accounts:
 
 - mwebb, rholt, cnovak, jblake with `@slytech.us` UPNs
 - All tiered admin accounts: mwebb.admin.t0, mwebb.admin.t1, rholt.admin.t0, rholt.admin.t1, cnovak.admin.t2
 - Service accounts: svc.backup, svc.legacy
-- All showing `On-premises sync: Yes`
 
 ![Entra ID Users list showing all 18 synced AD accounts with slytech.us UPNs](/images/08-entra-users-synced.png)
 
-The PAM structure came across intact. Every tier account, every service account, the whole thing. That's the value of building the on-prem environment properly before syncing it. There was nothing to clean up in the cloud because the source was already clean.
+The PAM structure came across intact. Nothing to clean up in the cloud because the source was already clean.
 
 ## Validation
 
-The real test was authentication. Signed into `myapps.microsoft.com` as `mwebb@slytech.us` using Marcus Webb's AD password. It authenticated. A user whose account lives in Active Directory on dc01 in the homelab just signed into a Microsoft cloud service using the same credentials, with no separate cloud password to manage. That's Password Hash Sync working exactly as designed.
+Signed into `myapps.microsoft.com` as `mwebb@slytech.us` using Marcus Webb's AD password. Authenticated. Same credentials, on-prem and cloud, no separate account to manage.
 
 ![My Apps portal showing successful sign-in as mwebb@slytech.us](/images/09-entra-myapps-mwebb.png)
-
-In an enterprise context this is the moment where a help desk technician can use the same Active Directory credentials to access SharePoint, Teams, or any Entra-integrated application without a separate account or password sync issue to troubleshoot. That reduces password sprawl and the overhead that comes with managing duplicate accounts across on-premises and cloud.
 
 ## What's Next
 
