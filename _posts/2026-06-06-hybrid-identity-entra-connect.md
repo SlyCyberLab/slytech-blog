@@ -4,6 +4,7 @@ title: "Building a Hybrid Identity Environment with Active Directory and Microso
 date: 2026-06-06
 categories: [homelab, cloud, iam]
 tags: [entra-id, active-directory, entra-connect, hybrid-identity, microsoft-365, windows-server, identity, cloud]
+permalink: /hybrid-identity-entra-connect/
 ---
 
 My AD environment was solid. Tiered admin accounts, JIT elevation, PAM groups, GPO-enforced access controls, the whole thing. But it only existed on-prem. The moment someone asked me to demonstrate cloud identity or device management, I had nothing to show. This project fixes that by extending the existing slytech.us domain into Microsoft Entra ID using Entra Connect, turning a standalone Active Directory into a hybrid identity environment.
