@@ -1,4 +1,4 @@
-     ---
+---
 title: "Building a Hybrid Identity Environment with Active Directory and Microsoft Entra ID"
 date: 2026-06-09
 description: "Extending the slytech.us on-prem Active Directory into Microsoft Entra ID using Entra Connect to build a hybrid identity foundation for Intune, Conditional Access, and Defender for Endpoint."
