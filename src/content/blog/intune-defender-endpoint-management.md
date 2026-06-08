@@ -8,7 +8,7 @@ tags: [intune, defender, endpoint-management, hybrid-join, entra-id, microsoft-3
 
 Hybrid identity was working. All 18 AD users synced to Entra ID, mwebb authenticating against Microsoft cloud services with on-prem credentials. But the workstation he logs into every day had no idea any of that existed. WIN11 was domain-joined, sitting in AD, completely invisible to the cloud. No compliance visibility, no centralized configuration, no endpoint security reporting. This project fixes that.
 
-The goal: take WIN11 from a standalone domain-joined workstation to a fully cloud-managed endpoint. Hybrid Entra joined, enrolled in Intune, compliance policy applied, reporting into Defender for Endpoint. Everything builds on the [hybrid identity foundation from the previous post](https://blog.slytech.us/blog/hybrid-identity-entra-connect).
+The goal: take WIN11 from a standalone domain-joined workstation to a fully cloud-managed endpoint. Hybrid Entra joined, enrolled in Intune, compliance policy applied, reporting into Defender for Endpoint. Everything builds on the [hybrid identity foundation from the previous post](https://blog.slytech.us/blog/entra-connect-hybrid-identity).
 
 ## The Environment Going In
 
