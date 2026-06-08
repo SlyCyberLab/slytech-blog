@@ -126,6 +126,7 @@ Also required setting MDM user scope to **All** in the Intune portal under Devic
 WIN11 showed up in Intune within a few minutes, Compliant status, mwebb@slytech.us as primary user.
 
 ![WIN11 listed in Intune all devices view showing Compliant status](/images/08-intune-win11-enrolled.png)
+![WIN11 listed in Intune all devices view showing Compliant status](/images/08.1-intune-win11-enrolled.png)
 
 ## Compliance and Configuration Policies
 
