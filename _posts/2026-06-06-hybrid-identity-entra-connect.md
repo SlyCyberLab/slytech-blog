@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Building a Hybrid Identity Environment with Active Directory and Microsoft Entra ID"
-date: 2026-06-07
+date: 2026-06-06
 categories: [homelab, cloud, iam]
 tags: [entra-id, active-directory, entra-connect, hybrid-identity, microsoft-365, windows-server, identity, cloud]
 ---
