@@ -8,7 +8,7 @@ tags: [azure, terraform, azure-policy, log-analytics, workbooks, governance, iac
 
 Hybrid identity working. Endpoints managed. Everything running, nothing governed. No tagging standard, no policy enforcement, no central visibility into what was happening across the environment. Anyone could deploy a resource with no tags, no compliance check, nothing. This project fixes that.
 
-Three tools, one goal: Azure Policy to enforce standards, Terraform to provision infrastructure as code, and Log Analytics Workbooks to pull everything into a single dashboard. This builds directly on the [hybrid identity](https://blog.slytech.us/blog/hybrid-identity-entra-connect) and [endpoint management](https://blog.slytech.us/blog/intune-defender-endpoint) work from the previous two posts.
+Three tools, one goal: Azure Policy to enforce standards, Terraform to provision infrastructure as code, and Log Analytics Workbooks to pull everything into a single dashboard. This builds directly on the [hybrid identity](https://blog.slytech.us/blog/entra-connect-hybrid-identity/) and [endpoint management](https://blog.slytech.us/blog/intune-defender-endpoint-management/) work from the previous two posts.
 
 ## Why These Three Together
 
@@ -51,6 +51,8 @@ az login
 ```
 
 Two subscriptions showed up. The free tier subscription tied to slytech.us was the right one.
+
+![Azure portal home showing the slytech.us subscription](/images/01-azure-portal-home.png)
 
 ## The Infrastructure
 
@@ -152,6 +154,14 @@ terraform import azurerm_resource_group.slytech /subscriptions/c7bc1daa-e643-482
 
 After the import, `terraform plan` showed 4 resources to add, 1 to change. Apply went clean.
 
+![Terraform init output showing provider installation](/images/04-terraform-init.png)
+
+![Terraform plan output showing 5 resources](/images/05-terraform-plan-1.png)
+
+![Terraform apply complete showing 4 added, 1 changed](/images/07-terraform-apply.png)
+
+![Azure resource group showing VNet and NSG deployed](/images/08-azure-rg-resources.png)
+
 ## Azure Policy: Where It Gets Interesting
 
 Three policies assigned to `rg-slytech-lab`:
@@ -161,6 +171,8 @@ Three policies assigned to `rg-slytech-lab`:
 3. Audit VMs without disaster recovery configured — flags VMs not covered by Azure Site Recovery
 
 The tag policy is set to `deny`, not `audit`. Audit mode logs violations. Deny mode stops them.
+
+![Azure Policy assignments showing all three policies](/images/11-azure-policy-assignments.png)
 
 The policy proved itself immediately when trying to deploy the Log Analytics workspace through the portal. Filled in all the fields, clicked Create, and got this:
 
@@ -174,6 +186,8 @@ The policy proved itself immediately when trying to deploy the Log Analytics wor
 }
 ```
 
+![Azure Policy blocking the Log Analytics workspace deployment due to missing tag](/images/12-azure-policy-blocking-deployment.png)
+
 The portal form had a Tags tab. Filled it in. Same error. The portal wasn't passing the tags correctly to the API. Switched to Azure CLI with inline tags:
 
 ```bash
@@ -186,11 +200,15 @@ az monitor log-analytics workspace create \
 
 Deployed in seconds. The CLI passes tags directly in the API call without the portal form translation layer getting in the way. Worth remembering any time portal deployments get blocked by tag policies.
 
+![Log Analytics workspace created via CLI with tags confirmed](/images/13-law-created.png)
+
 ## Connecting the Data
 
 With the workspace running, connected Entra ID diagnostic settings to start streaming identity logs: AuditLogs, SignInLogs, ProvisioningLogs. Navigate to Entra admin center > Diagnostic settings > Add diagnostic setting, point it at `law-slytech-lab`, save.
 
 The same policy that blocked the Log Analytics deployment also blocked saving the workbook on the first attempt. The workbook is a resource too and needed the Environment tag. Added the tags and it saved cleanly. Policy enforcing consistently across every resource type in scope, exactly as designed.
+
+![Workbook policy violation on first save attempt](/images/15-workbook-policy-blocked.png)
 
 ## The Dashboard
 
@@ -224,6 +242,10 @@ The first query results showed what had been happening in the tenant:
 - `Self-service password reset flow activity progress` — 1 success, 1 failure
 
 That last one is interesting. A failed password reset attempt sitting in the audit logs is exactly the kind of event that matters in a real SOC environment.
+
+![Log Analytics query returning live AuditLogs data](/images/17-law-query-results.png)
+
+![SlyTech Security Dashboard workbook showing live audit data](/images/18-workbook-live-data.png)
 
 ## Wrapping Up
 
