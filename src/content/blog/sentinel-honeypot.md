@@ -1,12 +1,12 @@
 ---
-title: "Microsoft Sentinel and a Honeypot That Got Hit in Under an Hour"
+title: "Microsoft Sentinel and a Honeypot That Got Hit 50 Times in Under an Hour"
 date: 2026-06-15
 description: "Connecting Microsoft Sentinel to the slytech.us hybrid environment, building custom detection rules mapped to MITRE ATT&CK, deploying a deliberately exposed honeypot VM, and watching real global attack traffic roll in."
 category: detection
 tags: [sentinel, honeypot, azure, siem, kql, threat-detection, defender, log-analytics]
 ---
 
-The governance layer was in place. Logs flowing. Policies enforcing. Everything looked clean from the inside. The question was what it looked like from the outside, and whether anything was watching for the answer. This project connects Microsoft Sentinel to the existing slytech.us environment, builds detection rules against real identity data, and deploys a honeypot VM with RDP intentionally exposed to see what shows up.
+This project connects Microsoft Sentinel to the existing slytech.us environment, builds detection rules against real identity data, and deploys a honeypot VM with RDP intentionally exposed to see what shows up.
 
 It builds on the [hybrid identity](https://blog.slytech.us/blog/entra-connect-hybrid-identity), [endpoint management](https://blog.slytech.us/blog/intune-defender-endpoint-management), and [governance](https://blog.slytech.us/blog/cloud-governance-terraform-policy-workbooks) work from the previous three posts.
 
@@ -29,7 +29,7 @@ Everything already running in the tenant started feeding into the SIEM automatic
 
 ![Eight Microsoft data connectors auto-connected in Sentinel](/images/02-sentinel-data-connectors.png)
 
-![Sentinel overview showing events in previous 24 hours](/images/03-sentinel-overview.png)
+<!-- ![Sentinel overview showing events in previous 24 hours](/images/03-sentinel-overview.png) -->
 
 ## The Detection Rules
 
@@ -172,7 +172,7 @@ SecurityEvent
 | where AttackCount > 0 and isnotempty(latitude) and isnotempty(longitude)
 ```
 
-The automated tools hitting the machine cycled through the same username list: `admin`, `administrator`, `user`, `sa`, `root`, `guest`, `test`. They didn't know what was on the machine. Every RDP-exposed IP on the internet gets the same treatment.
+The automated tools hitting the machine cycled through the same username list: `Admin`, `Administrator`, `user`, `corpdc02`, `Windows`, `Accounting`, `test`. They didn't know what was on the machine. Every RDP-exposed IP on the internet gets the same treatment.
 
 ![Attack map showing 53 attacks from multiple countries in the first few hours](/images/16-honeypot-attack-map-early.png)
 
@@ -188,10 +188,13 @@ Left the honeypot running overnight. The numbers tell the rest of the story.
 
 ![Hourly attack trend showing volume over 24 hours](/images/18-honeypot-attack-trend.png)
 
-## Wrapping Up
+In just under 24 hours, the honeypot logged 1,763 failed login attempts from 34 countries. No vulnerability exploited, no phishing link clicked. Just an exposed port and a recognizable machine name.
 
-Building detections in a lab against manufactured data is useful. Watching a real IP from Vietnam try `administrator`, `admin`, and `sa` against a machine built twenty minutes earlier is different. The rule firing, the incident appearing, the source IP mapping to a country on the attack map — that's when the detection pipeline stops being abstract.
+![1,763 failed login attempts from 34 countries logged in under 24 hours](/images/19-honeypot-total-attacks.png)
 
-The incidents queue debugging was the more valuable lesson. Alerts existing in the SecurityAlert table while the incidents queue stayed empty is a failure mode that's easy to misread as broken detection logic. It's not. The query was fine. The correlation settings were the problem. Checking SecurityAlert directly before rewriting the rule would have saved the time spent second-guessing the KQL.
+## Lessons Learned
 
-The environment is still running.
+Building detections in a lab against manufactured data is useful. Watching attack traffic roll in from 34 different countries against a machine that was live for less than 48 hours is different. The rule firing, the incident appearing, the source IPs mapping to a world map, that is when the detection pipeline stops being abstract.
+
+The honeypot data also confirmed something worth reinforcing in any environment: `Administrator`, `admin`, `user`, and the machine's own hostname are the first usernames every automated scanner tries. If any of those exist as active accounts in a real environment, they are getting hit constantly. Rename them, disable them, or put them behind MFA at minimum. The logs make this impossible to ignore when you are watching it happen in real time.
+
