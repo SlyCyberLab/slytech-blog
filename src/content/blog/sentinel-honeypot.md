@@ -3,6 +3,7 @@ title: "Microsoft Sentinel and a Honeypot That Got Hit in Under an Hour"
 date: 2026-06-15
 description: "Connecting Microsoft Sentinel to the slytech.us hybrid environment, building custom detection rules mapped to MITRE ATT&CK, deploying a deliberately exposed honeypot VM, and watching real global attack traffic roll in."
 category: detection
+draft: true
 tags: [sentinel, honeypot, azure, siem, kql, threat-detection, defender, log-analytics]
 ---
 
