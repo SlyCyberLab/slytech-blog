@@ -194,7 +194,7 @@ In just under 24 hours, the honeypot logged 1,763 failed login attempts from 34 
 
 ## Lessons Learned
 
-Building detections in a lab against manufactured data is useful. Watching attack traffic roll in from 34 different countries against a machine that was live for less than 48 hours is different. The rule firing, the incident appearing, the source IPs mapping to a world map, that is when the detection pipeline stops being abstract.
+Building detections in a lab against manufactured data is useful. Watching attack traffic roll in from 34 different countries against a machine that was live for less than 24 hours is different. The rule firing, the incident appearing, the source IPs mapping to a world map, that is when the detection pipeline stops being abstract.
 
 The honeypot data also confirmed something worth reinforcing in any environment: `Administrator`, `admin`, `user`, and the machine's own hostname are the first usernames every automated scanner tries. If any of those exist as active accounts in a real environment, they are getting hit constantly. Rename them, disable them, or put them behind MFA at minimum. The logs make this impossible to ignore when you are watching it happen in real time.
 
