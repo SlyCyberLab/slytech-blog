@@ -113,18 +113,3 @@ Most of the time went into the gotchas, not the logic. The ones worth writing do
 - **Task logon type controls the popup.** Interactive runs the job in the desktop session. S4U runs it silently in the background.
 
 In an enterprise context this closes the offboarding gap that leaves terminated accounts live for days, and it removes the manual provisioning overhead on every new hire. A manager fills out a form, and identity lifecycle happens on its own with a full audit trail. That is the difference between a checklist somebody forgets and a control that runs whether anyone remembers it or not.
-
----
-
-**Skills Demonstrated**
-- PowerShell Automation
-- Microsoft Graph API Integration
-- Active Directory Administration
-- Azure Identity Management
-- Identity Lifecycle Management
-- SharePoint and Power Platform Integration
-
-**Resume Bullets**
-- Automated end-to-end identity lifecycle across Active Directory and Microsoft 365 using PowerShell and Microsoft Graph, provisioning new hires from a SharePoint request form to a fully licensed M365 account with manager notification in under three minutes
-- Built an automated offboarding pipeline that disables Active Directory accounts, revokes all Entra ID sessions, reclaims M365 licenses, and produces an audit trail, closing the security gap left by manual termination processes
-- Implemented app-only Microsoft Graph authentication with client-secret credentials stored in SecretStore, enabling unattended scheduled execution on Windows Server 2025
