@@ -8,7 +8,7 @@ tags: [powershell, microsoft-graph, active-directory, entra-id, automation, shar
 
 Onboarding a new hire in a hybrid environment is the same fifteen clicks every time. Create the AD user, drop them in the right OU, add the group memberships, wait for the sync, set the usage location, assign the license, then email the manager the temporary password. Offboarding is the same thing in reverse, and it is the one nobody remembers to finish. The account sits enabled for weeks after someone leaves because disabling it was step six on a checklist that got interrupted at step three.
 
-That gap is a real security problem and a real time sink. So I built it into a pipeline. A manager fills out a SharePoint form, a scheduled PowerShell job picks it up, and the whole sequence runs against Active Directory and Microsoft Graph with no human in the loop. This is the project that lives at [github.com/SlyCyberLab/IdentityLifecycleAutomation](https://github.com/SlyCyberLab/IdentityLifecycleAutomation), built on top of the [hybrid identity](https://blog.slytech.us/blog/entra-connect-hybrid-identity) foundation from earlier in this series.
+That gap is a real security problem and a real time sink. So I built it into a pipeline. A manager or HR fills out a SharePoint form, a scheduled PowerShell job picks it up, and the whole sequence runs against Active Directory and Microsoft Graph with no human in the loop. This is the project that lives at [github.com/SlyCyberLab/IdentityLifecycleAutomation](https://github.com/SlyCyberLab/IdentityLifecycleAutomation), built on top of the [hybrid identity](https://blog.slytech.us/blog/entra-connect-hybrid-identity) foundation from earlier in this series.
 
 ![Repository structure for the Identity Lifecycle Automation project](/images/01-repo-structure.png)
 
@@ -102,7 +102,7 @@ The request flips to Completed, and the manager gets the confirmation email list
 
 ## Lessons Learned
 
-Most of the time went into the gotchas, not the logic. The ones worth writing down:
+This project taught me more through its failures than its successes. The ones worth writing down:
 
 - **WAM hijacks unattended auth.** Even with a client secret, the Graph module kept falling back to an interactive popup. Building the credential as a `PSCredential` and passing it with `-ClientSecretCredential` keeps WAM out of the picture.
 - **SecretStore prompts for a password by default.** Fine interactively, fatal for a scheduled job. `Set-SecretStoreConfiguration -Authentication None -Interaction None` makes it unlock silently.
