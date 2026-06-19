@@ -20,7 +20,7 @@ I built two lists on the IT site: one for new hire requests, one for offboarding
 
 ![SharePoint site hosting the request lists](/images/02-sharepoint-site.png)
 
-![New hire request list](/images/03-sharepoint-newhire-list.png)
+<!-- ![New hire request list](/images/03-sharepoint-newhire-list.png) -->
 
 The columns on each list map directly to what the scripts need. The new hire list captures first name, last name, department, job title, manager email, and start date. The offboarding list captures UPN, display name, manager email, and last working day. Both carry a Status field that drives the whole workflow: Pending, Completed, or Failed.
 
@@ -34,7 +34,7 @@ Power Apps auto-generates a form from the list, and after a bit of cleanup it be
 
 ![Cleaned up Power Apps form](/images/07-powerapps-form-clean.png)
 
-![Published Power Apps form](/images/08-powerapps-published.png)
+<!-- ![Published Power Apps form](/images/08-powerapps-published.png) -->
 
 A test request submitted through the form lands in the list as a Pending item, which is exactly what the automation polls for.
 
