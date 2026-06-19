@@ -104,12 +104,13 @@ The request flips to Completed, and the manager gets the confirmation email list
 
 This project taught me more through its failures than its successes. The ones worth writing down:
 
-- **WAM hijacks unattended auth.** Even with a client secret, the Graph module kept falling back to an interactive popup. Building the credential as a `PSCredential` and passing it with `-ClientSecretCredential` keeps WAM out of the picture.
-- **SecretStore prompts for a password by default.** Fine interactively, fatal for a scheduled job. `Set-SecretStoreConfiguration -Authentication None -Interaction None` makes it unlock silently.
-- **The Graph SDK returned empty objects for list items.** `Get-MgSiteListItem` handed back null fields and empty IDs. Dropping to raw `Invoke-MgGraphRequest` calls returned clean data every time. When the wrapper fights you, go to the API.
-- **PowerShell `.Count` lies about single objects.** It reported 12 pending requests on a one-item list because `.Count` returns property count, not record count. Wrapping the result in `@(...)` fixes it.
-- **Usage location must propagate before licensing.** Setting it with `Update-MgUser` is not instant, so the script polls until Entra confirms it before assigning the license.
-- **Function returns get contaminated into arrays.** The UPN kept coming back as an array or empty string. A script-scoped variable plus explicit `[string]` casts solved it.
-- **Task logon type controls the popup.** Interactive runs the job in the desktop session. S4U runs it silently in the background.
+- **WAM breaks unattended auth.** Passing the client secret as a `PSCredential` via `-ClientSecretCredential` prevented Graph from triggering interactive sign-in.
+- **SecretStore is interactive by default.** Scheduled jobs require `Authentication None` and `Interaction None` for silent access.
+- **Graph SDK wrappers are not always reliable.** `Get-MgSiteListItem` returned incomplete data, while direct Graph API calls worked consistently.
+- **`.Count` is not always a row count.** Wrapping results in `@(...)` avoids misleading counts when only one object is returned.
+- **Licensing depends on usage location.** The script waits for Entra to confirm the location update before assigning licenses.
+- **Function output can become arrays unexpectedly.** Explicit string casting and controlled variable scope eliminated inconsistent returns.
 
-In an enterprise context this closes the offboarding gap that leaves terminated accounts live for days, and it removes the manual provisioning overhead on every new hire. A manager fills out a form, and identity lifecycle happens on its own with a full audit trail. That is the difference between a checklist somebody forgets and a control that runs whether anyone remembers it or not.
+The most dangerous account in a company is often the one nobody realizes still exists. A terminated employee's account can retain access to email, files, and critical systems for days after they leave because offboarding depends on a manual process that was never completed.
+
+In an enterprise context, automating identity lifecycle management closes that gap and removes the provisioning burden for every new hire. A manager fills out a form, and account creation, access updates, and deprovisioning happen automatically with a complete audit trail. That is the difference between a checklist someone might forget and a control that runs whether anyone remembers it or not.
