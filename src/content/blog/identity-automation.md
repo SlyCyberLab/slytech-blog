@@ -10,7 +10,7 @@ Onboarding a new hire in a hybrid environment is the same manual sequence every 
 
 That gap is a real security problem and a real time sink. So I built it into a pipeline. A manager or HR fills out a SharePoint form, a scheduled PowerShell job picks it up, and the whole sequence runs against Active Directory and Microsoft Graph with no human in the loop. This is the project that lives at [github.com/SlyCyberLab/IdentityLifecycleAutomation](https://github.com/SlyCyberLab/IdentityLifecycleAutomation), built on top of the [hybrid identity](https://blog.slytech.us/blog/entra-connect-hybrid-identity) foundation from earlier in this series.
 
-![Repository structure for the Identity Lifecycle Automation project](/images/01-repo-structure.png)
+![Architecture](./screenshots/architecture-diagram.png)
 
 ## Why SharePoint as the Front Door
 
