@@ -6,7 +6,7 @@ category: iam
 tags: [powershell, microsoft-graph, active-directory, entra-id, automation, sharepoint, m365]
 ---
 
-Onboarding a new hire in a hybrid environment is the same fifteen clicks every time. Create the AD user, drop them in the right OU, add the group memberships, wait for the sync, set the usage location, assign the license, then email the manager the temporary password. Offboarding is the same thing in reverse, and it is the one nobody remembers to finish. The account sits enabled for weeks after someone leaves because disabling it was step six on a checklist that got interrupted at step three.
+Onboarding a new hire in a hybrid environment is the same manual sequence every time. Create the AD user, place them in the right OU, add the groups, wait for the sync, set the usage location, assign the license, email the manager the password. Offboarding is the same thing in reverse, and it's the one nobody remembers to finish. The account sits enabled for weeks after someone leaves because disabling it was step six on a checklist that got interrupted at step three.
 
 That gap is a real security problem and a real time sink. So I built it into a pipeline. A manager or HR fills out a SharePoint form, a scheduled PowerShell job picks it up, and the whole sequence runs against Active Directory and Microsoft Graph with no human in the loop. This is the project that lives at [github.com/SlyCyberLab/IdentityLifecycleAutomation](https://github.com/SlyCyberLab/IdentityLifecycleAutomation), built on top of the [hybrid identity](https://blog.slytech.us/blog/entra-connect-hybrid-identity) foundation from earlier in this series.
 
