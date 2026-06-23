@@ -1,0 +1,189 @@
+---
+title: "Building an Identity Governance and Drift Monitoring Portal on Microsoft Graph"
+date: 2026-06-23
+description: "How I built a read-only identity governance layer on top of my existing lifecycle automation, using PowerShell, Microsoft Graph API, and a Microsoft Fluent-styled dashboard to surface drift, privileged access changes, and disabled accounts with active licenses."
+category: iam
+tags: [microsoft-graph, entra-id, powershell, identity-governance, azure]
+---
+
+Most identity automation projects stop at provisioning. You build the onboarding script, the offboarding script, wire them up to a form, and call it done. I did exactly that in my [Identity Lifecycle Automation](https://blog.slytech.us/blog/identity-auto) project. But after running it for a few weeks I kept asking the same questions. Who has Global Administrator right now? Which accounts got disabled but still have a license burning? What actually changed since last week?
+
+The automation handled the actions. Nothing handled the visibility. So I built the visibility layer.
+
+## Why a Governance Portal Instead of More Automation
+
+The obvious next step after automation is more automation. Detect a stale account, disable it automatically. Detect a license on a disabled user, remove it automatically. I considered that for about five minutes before deciding against it.
+
+Automated remediation in an identity system is high stakes. One misconfigured rule disables the wrong account or strips a license from the wrong user and you have a real incident on your hands. The better pattern, especially in a portfolio context, is to separate detection from remediation. Build the system that sees everything clearly first. Remediation comes after you trust what you're seeing.
+
+The other reason was portfolio positioning. A read-only governance and drift monitoring layer is a more interesting project to talk about in an interview than "I automated license removal." It demonstrates understanding of IAM observability, security auditing, and the kind of thinking that shows up in real enterprise IAM engineering roles.
+
+## The Architecture
+
+The system runs as four connected pieces. A PowerShell script pulls identity data from Microsoft Graph every week and writes a versioned JSON snapshot to disk. A second script compares the current snapshot to the previous one and generates a delta report. A Microsoft Fluent-styled dashboard reads both JSON files and renders the results. No database, no API server, no cloud infrastructure for the MVP.
+
+![Architecture diagram showing the full system flow](/images/00-architecture-diagram.png)
+
+The design principle was to keep it as simple as possible without making it look like a demo. Real enterprise governance tooling is mostly read operations on top of a directory. That is exactly what this is.
+
+## Setting Up the App Registration
+
+Everything in this project runs through Microsoft Graph with application permissions, meaning the script authenticates as itself rather than as a user. That required an app registration in Entra ID with the right permissions granted at the tenant level.
+
+The app registration went in under the name `identity-governance-portal`. Five permissions covered everything needed for the MVP.
+
+![App registration overview showing Application ID and Tenant ID](/images/01-app-registration-overview.png)
+
+The permissions that tripped me up were the MFA-related ones. The `credentialUserRegistrationDetails` endpoint I initially targeted returned a 400. The replacement endpoint, `authenticationMethods/userRegistrationDetails`, returned a 403. Both require either Entra ID P1/P2 licensing or a specific permission scope that my personal M365 tenant did not have. I cut MFA from the MVP scope and documented the licensing requirement. That becomes a honest note in the blog post rather than a gap I try to hide.
+
+The one step that is easy to miss on app registrations is admin consent. Adding the permissions is not enough. Every permission needs the green checkmark under Status on the API permissions page, which only appears after an admin explicitly grants consent. Without that step the token acquires fine but every Graph call returns 401.
+
+![API permissions page showing all five permissions with admin consent granted](/images/02-api-permissions-granted.png)
+
+## Validating the Graph Queries First
+
+Before writing a single line of the snapshot collector, I wrote a validation script that tested each Graph endpoint in isolation. This was the right call. Graph API documentation describes what endpoints return. What they actually return on your specific tenant with your specific licensing tier is a different conversation.
+
+```powershell
+# Load credentials from .env
+$envVars = Get-Content ..\.env | ConvertFrom-StringData
+$tenantId     = $envVars.TENANT_ID
+$clientId     = $envVars.CLIENT_ID
+$clientSecret = $envVars.CLIENT_SECRET
+
+# Get access token
+$body = @{
+    grant_type    = "client_credentials"
+    client_id     = $clientId
+    client_secret = $clientSecret
+    scope         = "https://graph.microsoft.com/.default"
+}
+
+$tokenResponse = Invoke-RestMethod `
+    -Uri "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token" `
+    -Method POST `
+    -Body $body
+
+$token   = $tokenResponse.access_token
+$headers = @{ Authorization = "Bearer $token" }
+```
+
+Three of the five planned queries worked cleanly on the first run. Users with account status, directory role assignments, and guest account filtering all returned good data. The MFA and sign-in activity endpoints hit the licensing wall and got cut. Knowing that before designing the JSON schema meant the schema reflected reality rather than aspirational API coverage.
+
+![PowerShell terminal showing clean output from all three working Graph queries](/images/04-graph-api-validation-output.png)
+
+## The Snapshot Collector
+
+The snapshot collector runs as a standalone PowerShell script for now, with the intent to move it into an Azure Function timer trigger as a later phase. It pulls users, directory roles with their members, and guest accounts, then calculates a governance score and generates observations before writing the whole thing as a versioned JSON file.
+
+The governance score formula is simple on purpose. Start at 100. Subtract 10 if any disabled accounts exist. Subtract 10 if guest accounts exceed five. Subtract 20 if privileged user count exceeds two. Subtract 10 for each disabled user still holding an active license. The score is not meant to be a precise security metric. It is meant to move visibly when something changes and give the dashboard a headline number that a non-technical stakeholder can interpret at a glance.
+
+The JSON schema versioning came from a practical need. The drift engine needs to compare two snapshots reliably. Storing them as `snapshots/YYYY-MM-DD/identity-snapshot.json` meant the comparison logic could always sort by filename, take the two most recent, and diff them without any additional metadata.
+
+```powershell
+$snapshot = @{
+    snapshotMetadata = @{
+        snapshotDate    = $snapshotDate
+        snapshotVersion = "1.1"
+        tenantId        = $tenantId
+        tenantDomain    = "slytech.us"
+        collectedBy     = "IdentityGovernancePortal"
+    }
+    summary = @{
+        totalUsers       = $allUsers.Count
+        activeUsers      = $activeUsers.Count
+        disabledUsers    = $disabledUsers.Count
+        guestUsers       = $guestUsers.Count
+        privilegedUsers  = $uniquePrivilegedCount
+        governanceScore  = $score
+    }
+    users = @($allUsers | ForEach-Object {
+        @{
+            id                = $_.id
+            displayName       = $_.displayName
+            userPrincipalName = $_.userPrincipalName
+            accountEnabled    = $_.accountEnabled
+            userType          = $_.userType
+            createdDateTime   = $_.createdDateTime
+            department        = $_.department
+            hasLicense        = $_.assignedLicenses.Count -gt 0
+        }
+    })
+    directoryRoles         = $directoryRoles
+    governanceObservations = $observations
+}
+```
+
+Running it against the slytech.us tenant came back clean: 21 users, 19 active, 2 disabled, 0 guests, 2 privileged, governance score of 90.
+
+![Terminal output from Get-IdentitySnapshot.ps1 showing successful collection](/images/06-snapshot-script-output.png)
+
+One thing that showed up immediately in the output was `tuser@slytech.us` flagged as a disabled account. That is the test user from the identity lifecycle automation project. The governance layer did not know that. It just saw a disabled account sitting in the tenant and flagged it. That is exactly the behavior the system is supposed to have.
+
+## The Drift Detection Engine
+
+The drift engine is where the project gets interesting. Comparing two weekly snapshots produces the kind of output that security teams actually look at during access reviews: what changed, who was added, who got disabled, did any privileged role assignments change.
+
+The comparison logic loads the two most recent snapshot files, diffs the user arrays by UPN, checks which accounts flipped from enabled to disabled, compares directory role memberships, and generates observations with severity levels.
+
+```powershell
+$snapshotFiles = Get-ChildItem -Path $snapshotsPath -Filter "identity-snapshot-*.json" |
+    Sort-Object Name -Descending
+
+$current  = Get-Content $snapshotFiles[0].FullName | ConvertFrom-Json
+$previous = Get-Content $snapshotFiles[1].FullName | ConvertFrom-Json
+
+$newUsers     = $currentUPNs  | Where-Object { $_ -notin $previousUPNs }
+$removedUsers = $previousUPNs | Where-Object { $_ -notin $currentUPNs }
+
+$newlyDisabled  = $currentDisabled  | Where-Object { $_ -notin $previousDisabled }
+$newPrivileged  = $currentPriv      | Where-Object { $_ -notin $previousPriv }
+```
+
+To test it properly I created a simulated previous week snapshot by copying the current one, backdating it to the prior Friday, and removing `tuser` from the users array with a slightly lower disabled count. The drift engine picked it up correctly: one new user added, one newly disabled account, period 2026-06-15 to 2026-06-22.
+
+![Terminal showing drift report output with period, delta cards, and observations](/images/09-drift-report-terminal.png)
+
+One thing to note honestly: a weekly snapshot cadence has a blind spot. If a Global Admin role gets assigned on Monday and removed by Thursday, the Friday snapshot never sees it. That is an acceptable tradeoff for an MVP. In a production implementation you would supplement weekly snapshots with event-driven triggers off Entra ID audit logs. That is on the roadmap.
+
+## The Dashboard
+
+The dashboard went through two design iterations. The first version used Tailwind CDN and read as generic out of the box. The second used plain CSS styled after Microsoft's Fluent design system, which made significantly more sense given that the underlying technology is all Microsoft. Segoe UI font, Microsoft blue `#0078d4` as the primary accent, four-square logo mark in the header, tab navigation with an active underline, breadcrumb headers, 2px corner radius on cards instead of the rounded defaults.
+
+![Dashboard overview page showing governance score, stat cards, and observations](/images/11-dashboard-overview-v2.png)
+
+The overview page has a findings bar at the top counting Critical, High, Medium, and Total findings, a score ring that animates on load, and a secondary stats row that breaks out Internal vs Guest users separately. That last distinction came from looking at a real M365 user audit dashboard and noticing how much more useful it is to see Internal and Guest separately than to see a combined total.
+
+The disabled users page ended up being the most useful addition. It ranks every disabled account by severity: Critical if the account still holds an active license, High if it is a disabled internal account, Medium otherwise. The issue column explains exactly why each account is flagged.
+
+![Disabled users page showing Jordan Blake flagged as CRITICAL with active license](/images/15-dashboard-disabled-users.png)
+
+`Jordan Blake` showing as CRITICAL is a real finding in the slytech.us tenant. Disabled account, Sales department, still licensed. In a real environment that is a wasted license and a potential access risk if the account ever gets re-enabled without a full access review.
+
+The drift report page renders the week-over-week deltas with color-coded arrows. Green for improvements, red for regressions. Newly disabled accounts show with a warning indicator. New users show with a green plus.
+
+![Drift report page showing period comparison and delta cards](/images/12-dashboard-drift.png)
+
+The privileged access page lists every directory role with its current members. Global Administrator shows two members on this tenant: the primary admin account and a Sync Admin service account that got assigned during Entra Connect setup. That second assignment is the kind of thing that lives in a tenant for months before anyone notices it during an audit.
+
+![Privileged access page showing role assignments with member avatars](/images/13-dashboard-privileged.png)
+
+## Wrapping Up
+
+Building the automation first and the observability layer second turned out to be the right order. The governance portal immediately surfaced three things worth caring about: a disabled account holding a license, a leftover test user from a previous project, and a service account in a privileged role that probably should not be there permanently. None of those required the automation to find them. They required something that looked at the tenant state weekly and asked whether it matched what was expected.
+
+The architecture deliberately avoids overengineering. No database, no remediation logic, no scheduled cloud jobs yet. Just a PowerShell collector, a JSON diff engine, and a dashboard that reads static files. That is enough to demonstrate the pattern. The Azure Function and Blob Storage pieces go in next, which is where this becomes a properly deployed cloud governance system rather than a local lab.
+
+---
+
+**Skills Demonstrated**
+- Microsoft Graph API integration with application-level permissions and admin consent
+- PowerShell-based identity data collection and JSON snapshot versioning
+- IAM governance drift detection and week-over-week delta analysis
+- Identity risk scoring and observation generation logic
+- Frontend dashboard development with Microsoft Fluent design system
+
+**Resume Bullets**
+- Built a read-only identity governance and drift monitoring portal using PowerShell and Microsoft Graph API, surfacing weekly snapshots, privileged access changes, and disabled accounts with active licenses across a Microsoft 365 tenant
+- Designed a drift detection engine comparing week-over-week Entra ID snapshots to identify newly disabled accounts, privilege escalation changes, and guest account growth with severity-ranked governance observations
+- Developed a Microsoft Fluent-styled Static Web App dashboard with five pages including an identity overview, drift report, privileged access monitor, and disabled users drilldown with license waste detection
