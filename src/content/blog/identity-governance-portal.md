@@ -8,11 +8,9 @@ tags: [microsoft-graph, entra-id, powershell, identity-governance, azure, ai, cl
 
 Most identity automation projects stop at provisioning. You build the onboarding script, the offboarding script, wire them up to a form, and call it done. I did exactly that in my [Identity Lifecycle Automation](https://blog.slytech.us/blog/identity-automation/) project. But after running it for a few weeks I kept asking the same questions. Who has Global Administrator right now? Which accounts got disabled but still have a license burning? What actually changed since last week?
 
-The automation handled the actions. Nothing handled the visibility. So I built the visibility layer, and then added an AI that explains what it sees. 
+The automation handled the actions. Nothing handled the visibility. So I built the visibility layer, and then added an AI that explains what it sees. Source and scripts available on [GitHub](https://github.com/SlyCyberLab/IdentityGovernancePortal).
 
 ## Why a Governance Portal Instead of More Automation
-
-The obvious next step after automation is more automation. Detect a stale account, disable it automatically. Detect a license on a disabled user, remove it automatically. I considered that for about five minutes before deciding against it.
 
 Automated remediation in an identity system is high stakes. One misconfigured rule disables the wrong account or strips a license from the wrong user and you have a real incident on your hands. The better pattern, especially in a portfolio context, is to separate detection from remediation. Build the system that sees everything clearly first. Remediation comes after you trust what you are seeing.
 
@@ -21,8 +19,6 @@ Automated remediation in an identity system is high stakes. One misconfigured ru
 The system runs as four connected pieces. A PowerShell script pulls identity data from Microsoft Graph every week and writes a versioned JSON snapshot to disk. A second script compares the current snapshot to the previous one and generates a delta report. A Microsoft Fluent-styled dashboard reads both JSON files and renders the results. An Azure Function proxies requests to the Anthropic API so the AI Copilot can answer questions about the data without exposing keys in the frontend.
 
 ![Architecture diagram showing the full system flow](/images/00-architecture-diagram.png)
-
-The design principle was to keep it as simple as possible without making it look like a demo. Real enterprise governance tooling is mostly read operations on top of a directory. That is exactly what this is.
 
 ## Setting Up the App Registration
 
@@ -146,8 +142,6 @@ One thing to note honestly: a weekly snapshot cadence has a blind spot. If a Glo
 
 ## The Dashboard
 
-The dashboard went through two design iterations. The first version used Tailwind CDN and read as generic out of the box. The second used plain CSS styled after Microsoft's Fluent design system, which made significantly more sense given that the underlying technology is all Microsoft. Segoe UI font, Microsoft blue `#0078d4` as the primary accent, four-square logo mark in the header, tab navigation with an active underline, breadcrumb headers, 2px corner radius on cards instead of the rounded defaults.
-
 The overview page starts with an executive health bar that gives a manager-level read in under ten seconds. Identity health status, governance score, critical findings count, week-over-week user delta, estimated license waste in dollars per month, and the highest risk account. All six cells calculated from live snapshot and drift data.
 
 ![Dashboard overview page showing exec health bar, governance score, and stat cards](/images/11-dashboard-overview-v2.png)
@@ -188,7 +182,7 @@ MFA Coverage shows as Data Unavailable with a note about Entra ID P1 licensing. 
 
 The final phase turned the portal into something genuinely different: a governance system that explains itself. I added an AI Copilot powered by Claude that reads the snapshot and drift data and answers natural language questions about what it finds.
 
-The architecture uses an Azure Function as a proxy. The browser sends requests to the Function, the Function adds the API key from Azure App Settings and forwards to the Anthropic API, and the response comes back. The API key never touches the frontend. This is the production pattern for AI integrations.
+The architecture uses an Azure Function as a proxy. The browser sends requests to the Function, the Function adds the API key from Azure App Settings and forwards to the Anthropic API, and the response comes back. The API key never touches the frontend.
 
 ![Azure Function deployment showing the copilot proxy function in Azure portal](/images/18-azure-function-deployment-complete.png)
 
@@ -212,6 +206,6 @@ The model behavior is strict. The system prompt instructs it to stay grounded in
 
 Building the automation first, then the visibility layer, then the AI layer turned out to be the right order. Each phase found things the previous one could not. The automation handled provisioning. The governance portal found a disabled account holding a license, a leftover test user, and a service account in a privileged role that should not be there permanently. The AI Copilot explained why those findings matter and what to do about them.
 
-The project is still local. The Azure Function is deployed but the snapshots still live on disk and the dashboard still runs via `npx serve`. The next phase is deploying to Azure Static Web Apps with Blob Storage for the snapshots and a timer-triggered Function for automated weekly collection. That is when it stops being a portfolio project and starts being a running governance system.
+The project is still local. The Azure Function is deployed but the snapshots still live on disk and the dashboard still runs via `npx serve`. The next phase is deploying to Azure Static Web Apps with Blob Storage for the snapshots and a timer-triggered Function for automated weekly collection. That is when it stops being a portfolio project and starts being a running governance system. The full source, scripts, and snapshots are on [GitHub](https://github.com/SlyCyberLab/IdentityGovernancePortal).
 
 
