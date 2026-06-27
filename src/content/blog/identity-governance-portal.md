@@ -1,24 +1,24 @@
 ---
 title: "Building an Identity Governance and Drift Monitoring Portal on Microsoft Graph"
 date: 2026-06-23
-description: "How I built a read-only identity governance layer on top of my existing lifecycle automation, using PowerShell, Microsoft Graph API, and a Microsoft Fluent-styled dashboard to surface drift, privileged access changes, and disabled accounts with active licenses."
+description: "How I built a read-only identity governance layer with an AI Copilot on top of my existing lifecycle automation, using PowerShell, Microsoft Graph, Azure Functions, and Claude to surface drift, privileged access changes, and compliance gaps."
 category: iam
-tags: [microsoft-graph, entra-id, powershell, identity-governance, azure]
+tags: [microsoft-graph, entra-id, powershell, identity-governance, azure, ai, claude]
 ---
 
 Most identity automation projects stop at provisioning. You build the onboarding script, the offboarding script, wire them up to a form, and call it done. I did exactly that in my [Identity Lifecycle Automation](https://blog.slytech.us/blog/identity-automation/) project. But after running it for a few weeks I kept asking the same questions. Who has Global Administrator right now? Which accounts got disabled but still have a license burning? What actually changed since last week?
 
-The automation handled the actions. Nothing handled the visibility. So I built the visibility layer.
+The automation handled the actions. Nothing handled the visibility. So I built the visibility layer, and then added an AI that explains what it sees.
 
 ## Why a Governance Portal Instead of More Automation
 
 The obvious next step after automation is more automation. Detect a stale account, disable it automatically. Detect a license on a disabled user, remove it automatically. I considered that for about five minutes before deciding against it.
 
-Automated remediation in an identity system is high stakes. One misconfigured rule disables the wrong account or strips a license from the wrong user and you have a real incident on your hands. The better pattern, especially in a portfolio context, is to separate detection from remediation. Build the system that sees everything clearly first. Remediation comes after you trust what you're seeing.
+Automated remediation in an identity system is high stakes. One misconfigured rule disables the wrong account or strips a license from the wrong user and you have a real incident on your hands. The better pattern, especially in a portfolio context, is to separate detection from remediation. Build the system that sees everything clearly first. Remediation comes after you trust what you are seeing.
 
 ## The Architecture
 
-The system runs as four connected pieces. A PowerShell script pulls identity data from Microsoft Graph every week and writes a versioned JSON snapshot to disk. A second script compares the current snapshot to the previous one and generates a delta report. A Microsoft Fluent-styled dashboard reads both JSON files and renders the results. No database, no API server, no cloud infrastructure for the MVP.
+The system runs as four connected pieces. A PowerShell script pulls identity data from Microsoft Graph every week and writes a versioned JSON snapshot to disk. A second script compares the current snapshot to the previous one and generates a delta report. A Microsoft Fluent-styled dashboard reads both JSON files and renders the results. An Azure Function proxies requests to the Anthropic API so the AI Copilot can answer questions about the data without exposing keys in the frontend.
 
 ![Architecture diagram showing the full system flow](/images/00-architecture-diagram.png)
 
@@ -32,7 +32,7 @@ The app registration went in under the name `identity-governance-portal`. Five p
 
 ![App registration overview showing Application ID and Tenant ID](/images/01-app-registration-overview.png)
 
-The permissions that tripped me up were the MFA-related ones. The `credentialUserRegistrationDetails` endpoint I initially targeted returned a 400. The replacement endpoint, `authenticationMethods/userRegistrationDetails`, returned a 403. Both require either Entra ID P1/P2 licensing or a specific permission scope that my personal M365 tenant did not have. I cut MFA from the MVP scope and documented the licensing requirement. That becomes a honest note in the blog post rather than a gap I try to hide.
+The permissions that tripped me up were the MFA-related ones. The `credentialUserRegistrationDetails` endpoint I initially targeted returned a 400. The replacement endpoint, `authenticationMethods/userRegistrationDetails`, returned a 403. Both require either Entra ID P1/P2 licensing or a specific permission scope that my personal M365 tenant did not have. I cut MFA from the MVP scope and documented the licensing requirement. That is an honest note rather than a gap I try to hide.
 
 The one step that is easy to miss on app registrations is admin consent. Adding the permissions is not enough. Every permission needs the green checkmark under Status on the API permissions page, which only appears after an admin explicitly grants consent. Without that step the token acquires fine but every Graph call returns 401.
 
@@ -148,17 +148,23 @@ One thing to note honestly: a weekly snapshot cadence has a blind spot. If a Glo
 
 The dashboard went through two design iterations. The first version used Tailwind CDN and read as generic out of the box. The second used plain CSS styled after Microsoft's Fluent design system, which made significantly more sense given that the underlying technology is all Microsoft. Segoe UI font, Microsoft blue `#0078d4` as the primary accent, four-square logo mark in the header, tab navigation with an active underline, breadcrumb headers, 2px corner radius on cards instead of the rounded defaults.
 
-![Dashboard overview page showing governance score, stat cards, and observations](/images/11-dashboard-overview-v2.png)
+The overview page starts with an executive health bar that gives a manager-level read in under ten seconds. Identity health status, governance score, critical findings count, week-over-week user delta, estimated license waste in dollars per month, and the highest risk account. All six cells calculated from live snapshot and drift data.
 
-The overview page has a findings bar at the top counting Critical, High, Medium, and Total findings, a score ring that animates on load, and a secondary stats row that breaks out Internal vs Guest users separately. That last distinction came from looking at a real M365 user audit dashboard and noticing how much more useful it is to see Internal and Guest separately than to see a combined total.
+![Dashboard overview page showing exec health bar, governance score, and stat cards](/images/11-dashboard-overview-v2.png)
 
-The disabled users page ended up being the most useful addition. It ranks every disabled account by severity: Critical if the account still holds an active license, High if it is a disabled internal account, Medium otherwise. The issue column explains exactly why each account is flagged.
+Below the health bar, the governance score breakdown makes the calculation transparent. Every deduction is listed with a visual bar showing its weight. Base score of 100, minus 10 for disabled accounts existing, minus 10 for a disabled user holding a license, final score of 80. Anyone looking at the dashboard can see exactly why the score is what it is, which is more useful than a number with no explanation.
+
+![Governance score breakdown showing each deduction rule and final score](/images/25-dashboard-score-breakdown.png)
+
+The observations are clickable. Clicking any finding opens a detail panel with the risk level, why it is a risk, which accounts are affected, the business impact, recommended remediation steps, and the Microsoft best practice reference. It reads like what a security analyst would put in a findings report.
+
+![Finding detail panel showing business impact and remediation for a disabled account finding](/images/27-dashboard-finding-detail.png)
+
+The disabled users page ended up being the most useful addition. It ranks every disabled account by severity: Critical if the account still holds an active license, High if it is a disabled internal account, Medium otherwise. Jordan Blake showing as CRITICAL is a real finding in the slytech.us tenant. Disabled account, Sales department, still licensed. In a real environment that is a wasted license and a potential access risk if the account ever gets re-enabled without a full access review.
 
 ![Disabled users page showing Jordan Blake flagged as CRITICAL with active license](/images/15-dashboard-disabled-users.png)
 
-`Jordan Blake` showing as CRITICAL is a real finding in the slytech.us tenant. Disabled account, Sales department, still licensed. In a real environment that is a wasted license and a potential access risk if the account ever gets re-enabled without a full access review.
-
-The drift report page renders the week-over-week deltas with color-coded arrows. Green for improvements, red for regressions. Newly disabled accounts show with a warning indicator. New users show with a green plus.
+The drift report page renders the week-over-week deltas with color-coded arrows. Green for improvements, red for regressions.
 
 ![Drift report page showing period comparison and delta cards](/images/12-dashboard-drift.png)
 
@@ -166,9 +172,46 @@ The privileged access page lists every directory role with its current members. 
 
 ![Privileged access page showing role assignments with member avatars](/images/13-dashboard-privileged.png)
 
+## The Compliance Page
+
+After building the dashboard I added a compliance page that maps the snapshot data to real framework controls. Six controls total: MFA Coverage, Disabled Account Cleanup, License Hygiene, Guest Account Governance, Privileged Account Review, and Global Admin Count. Each one shows pass, fail, review, or data unavailable, calculated from the live snapshot data, not hardcoded.
+
+Each control maps to CIS Controls, NIST CSF, ISO 27001, and Microsoft Secure Score references. The finding description explains what the snapshot shows and the remediation section tells you what to do about it.
+
+![Compliance page showing six controls with pass/fail status and framework mappings](/images/31-dashboard-compliance.png)
+
+Jordan Blake's license issue shows as a failing control on License Hygiene automatically. The control knows a disabled user has a license because it reads from the same snapshot the rest of the dashboard uses. Change the underlying data, the control status changes. That is the behavior you want from a governance system.
+
+MFA Coverage shows as Data Unavailable with a note about Entra ID P1 licensing. That is an honest representation of what the current tenant tier can provide, not a gap I tried to paper over.
+
+## Adding an AI Copilot
+
+The final phase turned the portal into something genuinely different: a governance system that explains itself. I added an AI Copilot powered by Claude that reads the snapshot and drift data and answers natural language questions about what it finds.
+
+The architecture uses an Azure Function as a proxy. The browser sends requests to the Function, the Function adds the API key from Azure App Settings and forwards to the Anthropic API, and the response comes back. The API key never touches the frontend. This is the production pattern for AI integrations.
+
+![Azure Function deployment showing the copilot proxy function in Azure portal](/images/18-azure-function-deployment-complete.png)
+
+The Copilot is context-aware. When you are on the Disabled Users page and ask "what is the risk here?", it automatically receives the disabled user data as context. When you are on the Drift Report and ask "explain these changes", it receives the drift report. You never paste data into the chat manually.
+
+The AI Risk Analysis card on the Overview page loads automatically and generates a plain English summary of the most important findings from the snapshot. The first time I ran it, it flagged Jordan Blake by name, called out the licensed disabled account as the most pressing finding, and noted that the `tuser` account suggested incomplete test account lifecycle governance. It read those findings from the JSON. It did not guess.
+
+![AI Identity Risk Analysis card showing grounded findings referencing specific users](/images/26-dashboard-ai-risk-card.png)
+
+The Executive Summary button generates a compact governance digest in under 40 words. Score, key facts, one action item. The kind of thing you would send to a manager before a weekly review.
+
+![Copilot panel showing compact executive summary output](/images/29-dashboard-exec-summary.png)
+
+The Copilot panel itself stays open alongside the dashboard. You can ask follow-up questions, switch pages, and the context updates automatically. The suggested prompts change based on which page you are viewing.
+
+![AI Copilot chat panel showing a governance question with a grounded response](/images/28-dashboard-copilot-chat.png)
+
+The model behavior is strict. The system prompt instructs it to stay grounded in the provided context, never hallucinate tenant state, and treat missing fields as unknown rather than implied. The responses reference actual user names and UPNs from the snapshot, not generic advice. That distinction matters. Generic AI advice about identity governance is easy to find. An analyst that reads your specific tenant data and explains what it found is something different.
+
 ## Wrapping Up
 
-Building the automation first and the observability layer second turned out to be the right order. The governance portal immediately surfaced three things worth caring about: a disabled account holding a license, a leftover test user from a previous project, and a service account in a privileged role that probably should not be there permanently. None of those required the automation to find them. They required something that looked at the tenant state weekly and asked whether it matched what was expected.
+Building the automation first, then the visibility layer, then the AI layer turned out to be the right order. Each phase found things the previous one could not. The automation handled provisioning. The governance portal found a disabled account holding a license, a leftover test user, and a service account in a privileged role that should not be there permanently. The AI Copilot explained why those findings matter and what to do about them.
 
-The architecture deliberately avoids overengineering. No database, no remediation logic, no scheduled cloud jobs yet. Just a PowerShell collector, a JSON diff engine, and a dashboard that reads static files. That is enough to demonstrate the pattern. The Azure Function and Blob Storage pieces go in next, which is where this becomes a properly deployed cloud governance system rather than a local lab.
+The project is still local. The Azure Function is deployed but the snapshots still live on disk and the dashboard still runs via `npx serve`. The next phase is deploying to Azure Static Web Apps with Blob Storage for the snapshots and a timer-triggered Function for automated weekly collection. That is when it stops being a portfolio project and starts being a running governance system.
+
 
