@@ -8,7 +8,7 @@ tags: [microsoft-graph, entra-id, powershell, identity-governance, azure, ai, cl
 
 Most identity automation projects stop at provisioning. You build the onboarding script, the offboarding script, wire them up to a form, and call it done. I did exactly that in my [Identity Lifecycle Automation](https://blog.slytech.us/blog/identity-automation/) project. But after running it for a few weeks I kept asking the same questions. Who has Global Administrator right now? Which accounts got disabled but still have a license burning? What actually changed since last week?
 
-The automation handled the actions. Nothing handled the visibility. So I built the visibility layer, and then added an AI that explains what it sees.
+The automation handled the actions. Nothing handled the visibility. So I built the visibility layer, and then added an AI that explains what it sees. 
 
 ## Why a Governance Portal Instead of More Automation
 
